@@ -9,7 +9,7 @@ RUN mvn clean install
 
 FROM openjdk:17-jdk-slim
 
-EXPOSE 8081
+EXPOSE 8082
 
 COPY --from=build /target/ms-locacoes-0.0.1-SNAPSHOT.jar app.jar
 
