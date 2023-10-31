@@ -3,6 +3,7 @@ package br.ufpr.mslocacoes.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -33,6 +34,7 @@ public class SecurityConfigurations {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //desabilita a autenticação stateful que utiliza sessões e página de login do spring security
                 .and().authorizeHttpRequests() //nada será autorizado. Todas as requisições precisarão do token gerado na api gateway
+                .requestMatchers(HttpMethod.POST, "/locacoes/horarios-disponiveis").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) //serve para chamar o filtro (SecurityFilter) antes do filtro do spring
                 .build();
