@@ -3,6 +3,7 @@ package br.ufpr.mslocacoes.controller;
 import br.ufpr.mslocacoes.model.dto.locacao.*;
 import br.ufpr.mslocacoes.service.LocacaoService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @CrossOrigin(origins ="*")
 @RestController
 @RequestMapping("/locacoes")
+@Slf4j
 public class LocacaoController {
 
     private final LocacaoService locacaoService;
@@ -30,6 +32,7 @@ public class LocacaoController {
     @PostMapping("/horarios-disponiveis")
     public ResponseEntity<HorariosDisponiveisResponse> verificarHorariosDisponiveisParaLocacao(
             @Valid @RequestBody HorarioDisponivelRequest horarioDisponivelRequest) {
+        log.info("INICIO verificarHorariosDisponiveisParaLocacao ms-locacoes");
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest));
     }
 
