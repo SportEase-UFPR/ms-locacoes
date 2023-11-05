@@ -190,7 +190,7 @@ public class LocacaoService {
         return null;
     }
 
-    public List<ReservaSolicitadaResponse> listarReservasSolicitadas() {
+    public List<ReservaDetalhadaResponse> listarReservasSolicitadas() {
         var listaReservasSolicitadas = locacaoRepository.listarReservasSolicitadas();
 
         if(listaReservasSolicitadas.isEmpty()) {
@@ -203,9 +203,9 @@ public class LocacaoService {
         var infComplementares = msCadastrosClient.buscarInformacoesComplementaresLocacao(infComplementaresRequest);
 
         //monta o objeto de retorno
-        var response = new ArrayList<ReservaSolicitadaResponse>();
-        listaReservasSolicitadas.forEach(reserva -> response.add(new ReservaSolicitadaResponse(reserva)));
-        response.forEach(reservaSolicitadaResponse -> reservaSolicitadaResponse.preencherInformacoesComplementares(infComplementares));
+        var response = new ArrayList<ReservaDetalhadaResponse>();
+        listaReservasSolicitadas.forEach(reserva -> response.add(new ReservaDetalhadaResponse(reserva)));
+        response.forEach(reserva -> reserva.preencherInformacoesComplementares(infComplementares));
 
         return response;
     }

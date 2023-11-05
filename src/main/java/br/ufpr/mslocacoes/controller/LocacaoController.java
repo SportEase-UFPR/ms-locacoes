@@ -62,7 +62,7 @@ public class LocacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.confirmarUsoReserva(token, idReserva));
     }
     @GetMapping("/listar-reservas-solicitadas")
-    public ResponseEntity<List<ReservaSolicitadaResponse>> listarReservasSolicitadas() {
+    public ResponseEntity<List<ReservaDetalhadaResponse>> listarReservasSolicitadas() {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasSolicitadas());
     }
 

@@ -18,6 +18,7 @@ public class InformacoesComplementaresLocacaoResponse {
     private Long idCliente;
     private String nomeCliente;
     private String cpfCliente;
+    private String emailCliente;
     private Boolean alunoUFPR;
     private String grr;
 
@@ -31,6 +32,7 @@ public class InformacoesComplementaresLocacaoResponse {
             this.localidadeEspacoEsportivo = (String) hm.get("localidadeEspacoEsportivo");
             this.nomeCliente = (String) hm.get("nomeCliente");
             this.cpfCliente = (String) hm.get("cpfCliente");
+            this.emailCliente = (String) hm.get("emailCliente");
             this.grr = (String) hm.get("grr");
         }
     }
