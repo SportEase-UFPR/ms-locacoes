@@ -202,7 +202,10 @@ public class LocacaoService {
         return response;
     }
 
-    public Void aprovarReserva(Long idReserva) {
+    public Void aprovarReserva(Long idReserva, String token) {
+        //recuperar o id do adm do token
+        Long idAdm = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
+
         //recuperar reserva
         Locacao locacao = locacaoRepository.findById(idReserva)
                 .orElseThrow(() -> new EntityNotFoundException("Locação não encontrada"));
@@ -213,10 +216,34 @@ public class LocacaoService {
         }
 
         locacao.setStatus(StatusLocacao.APROVADA);
+        locacao.setIdAdministrador(idAdm);
         locacaoRepository.save(locacao);
 
 
         //TODO enviar notificação e email para o usuário informando que a reserva foi aprovada
+        return null;
+    }
+
+    public Void negarReserva(Long idReserva, NegarReservaRequest request, String token) {
+        //recuperar o id do adm do token
+        Long idAdm = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
+
+        //recuperar reserva
+        Locacao locacao = locacaoRepository.findById(idReserva)
+                .orElseThrow(() -> new EntityNotFoundException("Locação não encontrada"));
+
+        //validar status da reserva
+        if(!locacao.getStatus().equals(StatusLocacao.SOLICITADA)) {
+            throw new BussinessException("Status da locação não permite negá-la");
+        }
+
+        locacao.setStatus(StatusLocacao.NEGADA);
+        locacao.setIdAdministrador(idAdm);
+        locacao.setMotivoCancelamento(request.getJustificativa());
+        locacaoRepository.save(locacao);
+
+
+        //TODO enviar notificação e email para o usuário informando que a reserva foi negada
         return null;
     }
 }

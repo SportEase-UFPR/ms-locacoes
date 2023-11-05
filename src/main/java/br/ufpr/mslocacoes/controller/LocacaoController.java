@@ -67,7 +67,14 @@ public class LocacaoController {
     }
 
     @PutMapping("/aprovar-reserva/{idReserva}")
-    public ResponseEntity<Void> aprovarReserva(@PathVariable Long idReserva) {
-        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.aprovarReserva(idReserva));
+    public ResponseEntity<Void> aprovarReserva(@PathVariable Long idReserva, @RequestHeader("AuthorizationUser") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.aprovarReserva(idReserva, token));
+    }
+
+    @PutMapping("/negar-reserva/{idReserva}")
+    public ResponseEntity<Void> negarReserva(@PathVariable Long idReserva,
+                                             @RequestBody @Valid NegarReservaRequest negarReservaRequest,
+                                             @RequestHeader("AuthorizationUser") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.negarReserva(idReserva, negarReservaRequest, token));
     }
 }
