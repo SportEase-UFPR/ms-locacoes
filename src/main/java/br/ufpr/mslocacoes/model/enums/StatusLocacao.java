@@ -6,5 +6,5 @@ public enum StatusLocacao {
     NEGADA,
     CANCELADA,
     FINALIZADA,
-    ABANDONADA
+    ENCERRADA
 }

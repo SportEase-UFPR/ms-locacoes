@@ -82,4 +82,11 @@ public class LocacaoController {
     public ResponseEntity<List<ReservaDetalhadaResponse>> buscarRelatorioDeReservas() {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarRelatorioDeReservas());
     }
+
+    @PostMapping("/avaliar-reserva/{idReserva}")
+    public ResponseEntity<Void> avaliarReserva(@PathVariable Long idReserva,
+                                               @RequestBody @Valid AvaliacaoReservaRequest request,
+                                               @RequestHeader("AuthorizationUser") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.avaliarReserva(idReserva, request, token));
+    }
 }

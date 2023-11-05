@@ -1,5 +1,6 @@
 package br.ufpr.mslocacoes.client;
 
+import br.ufpr.mslocacoes.model.dto.espaco_esportivos.AtualizarMediaAvaliacaoEERequest;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivos.EspEsportivoBuscaResponse;
 import br.ufpr.mslocacoes.model.dto.locacao.InformacoesComplementaresLocacaoRequest;
 import br.ufpr.mslocacoes.model.dto.locacao.InformacoesComplementaresLocacaoResponse;
@@ -56,5 +57,12 @@ public class MsCadastrosClient {
         assert response != null;
         response.forEach(obj -> listaInfComplementares.add(new InformacoesComplementaresLocacaoResponse(obj)));
         return listaInfComplementares;
+    }
+
+    public void atualizarMediaAvaliacaoEE(Long idEspacoEsportivo, AtualizarMediaAvaliacaoEERequest request) {
+        String url = urlMsCadastroEE + "/atualizar-media-avaliacao/" + idEspacoEsportivo;
+        HttpHeaders headers = gerarCabecalho();
+        headers.set("AuthorizationApi", tokenService.gerarTokenMsLocacoes());
+        restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(request, headers), Object.class);
     }
 }

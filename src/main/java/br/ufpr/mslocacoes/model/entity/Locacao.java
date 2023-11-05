@@ -50,6 +50,10 @@ public class Locacao {
 
     private String motivoCancelamento;
 
+    private Integer avaliacao;
+
+    private String comentarioCliente;
+
     public Locacao(SolicitacaoLocacaoRequest solicitacao, Long idCliente) {
         this.motivoSolicitacao = solicitacao.getMotivoSolicitacao();
         this.qtdParticipantes = solicitacao.getQtdParticipantes();

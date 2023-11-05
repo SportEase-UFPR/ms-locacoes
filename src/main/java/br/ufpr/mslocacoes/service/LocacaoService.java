@@ -3,6 +3,7 @@ package br.ufpr.mslocacoes.service;
 import br.ufpr.mslocacoes.client.MsCadastrosClient;
 import br.ufpr.mslocacoes.exceptions.BussinessException;
 import br.ufpr.mslocacoes.exceptions.EntityNotFoundException;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivos.AtualizarMediaAvaliacaoEERequest;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivos.EspEsportivoBuscaResponse;
 import br.ufpr.mslocacoes.model.dto.locacao.*;
 import br.ufpr.mslocacoes.model.entity.Locacao;
@@ -262,4 +263,26 @@ public class LocacaoService {
         return response;
     }
 
+    public Void avaliarReserva(Long idReserva, AvaliacaoReservaRequest request, String token) {
+        Long idCliente = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
+
+        var reserva = locacaoRepository.findByIdAndIdCliente(idReserva, idCliente)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada"));
+
+        if(reserva.getAvaliacao() != null) {
+            throw new BussinessException("Essa reserva já foi avaliada");
+        }
+
+        if(!reserva.getStatus().equals(StatusLocacao.FINALIZADA)) {
+            throw new BussinessException("Status da locação não permite avaliá-la");
+        }
+        reserva.setAvaliacao(request.getAvaliacao());
+        reserva.setComentarioCliente(request.getComentario());
+        locacaoRepository.save(reserva);
+
+        //atualizar média de avaliações do espaço esportivo
+        msCadastrosClient.atualizarMediaAvaliacaoEE(reserva.getIdEspacoEsportivo(), new AtualizarMediaAvaliacaoEERequest(request.getAvaliacao()));
+
+        return null;
+    }
 }
