@@ -58,4 +58,9 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
 
  List<Locacao> findByIdCliente(Long idCliente);
 
+ @Query(value = """
+    SELECT *
+    FROM tb_locacoes l
+    WHERE  l.status = 'SOLICITADA'""", nativeQuery = true)
+ List<Locacao> listarReservasSolicitadas();
 }

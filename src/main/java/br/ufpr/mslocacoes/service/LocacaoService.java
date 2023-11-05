@@ -190,4 +190,15 @@ public class LocacaoService {
         return null;
     }
 
+    public List<BuscaReservaResponse> listarReservasSolicitadas() {
+        List<Locacao> listaReservasSolicitadas = locacaoRepository.listarReservasSolicitadas();
+
+        if(listaReservasSolicitadas.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma reserva solicitada");
+        }
+
+        List<BuscaReservaResponse> response = new ArrayList<>();
+        listaReservasSolicitadas.forEach(reserva -> response.add(new BuscaReservaResponse(reserva)));
+        return response;
+    }
 }
