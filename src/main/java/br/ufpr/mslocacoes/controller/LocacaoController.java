@@ -77,4 +77,9 @@ public class LocacaoController {
                                              @RequestHeader("AuthorizationUser") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.negarReserva(idReserva, negarReservaRequest, token));
     }
+
+    @GetMapping("/relatorio-reservas")
+    public ResponseEntity<List<ReservaDetalhadaResponse>> buscarRelatorioDeReservas() {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarRelatorioDeReservas());
+    }
 }

@@ -20,6 +20,7 @@ public class ReservaDetalhadaResponse {
     private LocalDateTime dataHoraInicioReserva;
     private LocalDateTime dataHoraFimReserva;
     private StatusLocacao status;
+    private String motivoCancelamento;
 
     private InformacoesComplementaresLocacaoResponse informacoesComplementaresLocacao;
 
@@ -31,6 +32,7 @@ public class ReservaDetalhadaResponse {
         this.dataHoraInicioReserva = reserva.getDataHoraInicioReserva();
         this.dataHoraFimReserva = reserva.getDataHoraFimReserva();
         this.status = reserva.getStatus();
+        this.motivoCancelamento = reserva.getMotivoCancelamento();
     }
 
     public void preencherInformacoesComplementares(List<InformacoesComplementaresLocacaoResponse> lista) {

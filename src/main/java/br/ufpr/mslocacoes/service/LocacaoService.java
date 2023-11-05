@@ -190,26 +190,6 @@ public class LocacaoService {
         return null;
     }
 
-    public List<ReservaDetalhadaResponse> listarReservasSolicitadas() {
-        var listaReservasSolicitadas = locacaoRepository.listarReservasSolicitadas();
-
-        if(listaReservasSolicitadas.isEmpty()) {
-            throw new EntityNotFoundException("Nenhuma reserva solicitada");
-        }
-
-        //busca detalhes do cliente e do espaço esportivo da reserva
-        var infComplementaresRequest = new ArrayList<InformacoesComplementaresLocacaoRequest>();
-        listaReservasSolicitadas.forEach(reserva -> infComplementaresRequest.add(new InformacoesComplementaresLocacaoRequest(reserva)));
-        var infComplementares = msCadastrosClient.buscarInformacoesComplementaresLocacao(infComplementaresRequest);
-
-        //monta o objeto de retorno
-        var response = new ArrayList<ReservaDetalhadaResponse>();
-        listaReservasSolicitadas.forEach(reserva -> response.add(new ReservaDetalhadaResponse(reserva)));
-        response.forEach(reserva -> reserva.preencherInformacoesComplementares(infComplementares));
-
-        return response;
-    }
-
     public Void aprovarReserva(Long idReserva, String token) {
         //recuperar o id do adm do token
         Long idAdm = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
@@ -226,7 +206,6 @@ public class LocacaoService {
         locacao.setStatus(StatusLocacao.APROVADA);
         locacao.setIdAdministrador(idAdm);
         locacaoRepository.save(locacao);
-
 
         //TODO enviar notificação e email para o usuário informando que a reserva foi aprovada
         return null;
@@ -254,4 +233,33 @@ public class LocacaoService {
         //TODO enviar notificação e email para o usuário informando que a reserva foi negada
         return null;
     }
+
+    public List<ReservaDetalhadaResponse> buscarRelatorioDeReservas() {
+        var listaReservas = locacaoRepository.findAll();
+        return buscarDetalhesReserva(listaReservas);
+    }
+
+    public List<ReservaDetalhadaResponse> listarReservasSolicitadas() {
+        var listaReservasSolicitadas = locacaoRepository.listarReservasSolicitadas();
+        return buscarDetalhesReserva(listaReservasSolicitadas);
+    }
+
+    private List<ReservaDetalhadaResponse> buscarDetalhesReserva(List<Locacao> listaReservas) {
+        if (listaReservas.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma reserva solicitada");
+        }
+
+        // Busca detalhes do cliente e do espaço esportivo da reserva
+        var infComplementaresRequest = new ArrayList<InformacoesComplementaresLocacaoRequest>();
+        listaReservas.forEach(reserva -> infComplementaresRequest.add(new InformacoesComplementaresLocacaoRequest(reserva)));
+        var infComplementares = msCadastrosClient.buscarInformacoesComplementaresLocacao(infComplementaresRequest);
+
+        // Monta o objeto de retorno
+        var response = new ArrayList<ReservaDetalhadaResponse>();
+        listaReservas.forEach(reserva -> response.add(new ReservaDetalhadaResponse(reserva)));
+        response.forEach(reserva -> reserva.preencherInformacoesComplementares(infComplementares));
+
+        return response;
+    }
+
 }
