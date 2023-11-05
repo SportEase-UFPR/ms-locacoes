@@ -65,4 +65,9 @@ public class LocacaoController {
     public ResponseEntity<List<BuscaReservaResponse>> listarReservasSolicitadas() {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasSolicitadas());
     }
+
+    @PutMapping("/aprovar-reserva/{idReserva}")
+    public ResponseEntity<Void> aprovarReserva(@PathVariable Long idReserva) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.aprovarReserva(idReserva));
+    }
 }

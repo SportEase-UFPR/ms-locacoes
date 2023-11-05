@@ -201,4 +201,22 @@ public class LocacaoService {
         listaReservasSolicitadas.forEach(reserva -> response.add(new BuscaReservaResponse(reserva)));
         return response;
     }
+
+    public Void aprovarReserva(Long idReserva) {
+        //recuperar reserva
+        Locacao locacao = locacaoRepository.findById(idReserva)
+                .orElseThrow(() -> new EntityNotFoundException("Locação não encontrada"));
+
+        //validar status da reserva
+        if(!locacao.getStatus().equals(StatusLocacao.SOLICITADA)) {
+            throw new BussinessException("Status da locação não permite aprová-la");
+        }
+
+        locacao.setStatus(StatusLocacao.APROVADA);
+        locacaoRepository.save(locacao);
+
+
+        //TODO enviar notificação e email para o usuário informando que a reserva foi aprovada
+        return null;
+    }
 }
