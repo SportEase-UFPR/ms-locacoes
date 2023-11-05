@@ -53,7 +53,7 @@ public class EspEsportivoBuscaResponse {
             ArrayList<?> listaEsportesObj = (ArrayList<?>) hm.get("listaEsportes");
             listaEsportesObj.forEach(esporte -> this.listaEsportes.add(new EsporteResponse(esporte)));
 
-            this.imagemBase64 = (String) hm.get("nome");
+            this.imagemBase64 = (String) hm.get("imagemBase64");
         }
 
 
