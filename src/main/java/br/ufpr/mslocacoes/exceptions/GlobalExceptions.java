@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
+import static br.ufpr.mslocacoes.constants.HorarioBrasil.HORA_ATUAL;
+
 @ControllerAdvice
 public class GlobalExceptions {
 
@@ -20,7 +22,7 @@ public class GlobalExceptions {
             EntityNotFoundException e, HttpServletRequest request) {
 
         StandardError se = new StandardError(
-                LocalDateTime.now(), 404, HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+                HORA_ATUAL, 404, HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(se);
     }
@@ -30,7 +32,7 @@ public class GlobalExceptions {
             ConflictException e, HttpServletRequest request) {
 
         StandardError se = new StandardError(
-                LocalDateTime.now(), 409, HttpStatus.CONFLICT.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+                HORA_ATUAL, 409, HttpStatus.CONFLICT.getReasonPhrase(), e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(se);
     }
@@ -40,7 +42,7 @@ public class GlobalExceptions {
             MethodArgumentNotValidException e, HttpServletRequest request) {
 
         ValidationError errors = new ValidationError(
-                LocalDateTime.now(), 400, HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HORA_ATUAL, 400, HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 "field validation error", request.getRequestURI());
 
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
@@ -54,14 +56,14 @@ public class GlobalExceptions {
     public ResponseEntity<StandardError> handleJsonMappingException(JsonMappingException e, HttpServletRequest request) {
         if (e.getCause() instanceof DateTimeParseException) {
             StandardError se = new StandardError(
-                    LocalDateTime.now(), 400, HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                    HORA_ATUAL, 400, HttpStatus.BAD_REQUEST.getReasonPhrase(),
                     "Date field must have the format 'yyyy-mm-dd'", request.getRequestURI());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(se);
 
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new StandardError(
-                LocalDateTime.now(), 400, HttpStatus.BAD_REQUEST.getReasonPhrase(), null, request.getRequestURI()));
+                HORA_ATUAL, 400, HttpStatus.BAD_REQUEST.getReasonPhrase(), null, request.getRequestURI()));
     }
 
     @ExceptionHandler(EmailException.class)
@@ -69,7 +71,7 @@ public class GlobalExceptions {
             EmailException e, HttpServletRequest request) {
 
         StandardError se = new StandardError(
-                LocalDateTime.now(), 500, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+                HORA_ATUAL, 500, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(se);
     }
@@ -79,7 +81,7 @@ public class GlobalExceptions {
             BussinessException e, HttpServletRequest request) {
 
         StandardError se = new StandardError(
-                LocalDateTime.now(), 412, HttpStatus.PRECONDITION_FAILED.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+                HORA_ATUAL, 412, HttpStatus.PRECONDITION_FAILED.getReasonPhrase(), e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(se);
     }
@@ -89,7 +91,7 @@ public class GlobalExceptions {
             TokenInvalidoException e, HttpServletRequest request) {
 
         StandardError se = new StandardError(
-                LocalDateTime.now(),
+                HORA_ATUAL,
                 HttpStatus.UNAUTHORIZED.value(),
                 HttpStatus.UNAUTHORIZED.getReasonPhrase(),
                 e.getMessage(),

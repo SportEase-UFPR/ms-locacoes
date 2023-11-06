@@ -13,6 +13,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import static br.ufpr.mslocacoes.constants.HorarioBrasil.HORA_ATUAL;
+
 @Slf4j
 @Service
 public class TokenService {
@@ -69,6 +71,6 @@ public class TokenService {
     }
 
     private Instant dataExpiracao(Integer minutes) {
-        return LocalDateTime.now().plusMinutes(minutes).toInstant(ZoneOffset.of("-03:00"));
+        return HORA_ATUAL.plusMinutes(minutes).toInstant(ZoneOffset.of("-03:00"));
     }
 }

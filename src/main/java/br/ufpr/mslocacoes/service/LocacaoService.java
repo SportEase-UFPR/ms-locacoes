@@ -18,6 +18,8 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static br.ufpr.mslocacoes.constants.HorarioBrasil.HORA_ATUAL;
+
 @Service
 public class LocacaoService {
 
@@ -49,7 +51,7 @@ public class LocacaoService {
         }
 
         //verificar se dataHoraInicioReserva > horário atual
-        if(request.getDataHoraInicioReserva().isBefore(ZonedDateTime.now(ZoneOffset.ofHours(-3)).toLocalDateTime())) {
+        if(request.getDataHoraInicioReserva().isBefore(HORA_ATUAL)) {
             throw new BussinessException("dataHoraInicioReserva deve ser futuro a dataHora atual");
         }
 
@@ -185,7 +187,7 @@ public class LocacaoService {
         }
 
         //só é possível confirmar uso se o horário do inicio da reserva superou o horário atual
-        if(LocalDateTime.now().isBefore(locacao.getDataHoraInicioReserva())) {
+        if(HORA_ATUAL.isBefore(locacao.getDataHoraInicioReserva())) {
             throw new BussinessException("Só é possível confirmar o uso após o início do horário da reserva");
         }
 
@@ -282,7 +284,7 @@ public class LocacaoService {
         }
         reserva.setAvaliacao(request.getAvaliacao());
         reserva.setComentarioCliente(request.getComentario());
-        reserva.setDataHoraComentario(LocalDateTime.now());
+        reserva.setDataHoraComentario(HORA_ATUAL);
         locacaoRepository.save(reserva);
 
         //atualizar média de avaliações do espaço esportivo
