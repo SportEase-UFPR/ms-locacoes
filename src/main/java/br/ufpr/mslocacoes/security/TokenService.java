@@ -1,7 +1,6 @@
 package br.ufpr.mslocacoes.security;
 
 import br.ufpr.mslocacoes.exceptions.TokenInvalidoException;
-import br.ufpr.mslocacoes.model.enums.NivelAcesso;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -13,7 +12,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static br.ufpr.mslocacoes.constants.HorarioBrasil.HORA_ATUAL;
 
 @Slf4j
 @Service
