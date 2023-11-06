@@ -1,5 +1,6 @@
 package br.ufpr.mslocacoes.controller;
 
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.ComentarioEEResponse;
 import br.ufpr.mslocacoes.model.dto.locacao.*;
 import br.ufpr.mslocacoes.service.LocacaoService;
 import jakarta.validation.Valid;
@@ -88,5 +89,10 @@ public class LocacaoController {
                                                @RequestBody @Valid AvaliacaoReservaRequest request,
                                                @RequestHeader("AuthorizationUser") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.avaliarReserva(idReserva, request, token));
+    }
+
+    @GetMapping("/comentarios/{idEspacoEsportivo}")
+    public ResponseEntity<List<ComentarioEEResponse>> listarComentariosPorEspacoEsportivo(@PathVariable Long idEspacoEsportivo) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarComentariosPorEspacoEsportivo(idEspacoEsportivo));
     }
 }

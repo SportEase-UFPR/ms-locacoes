@@ -1,7 +1,8 @@
 package br.ufpr.mslocacoes.client;
 
-import br.ufpr.mslocacoes.model.dto.espaco_esportivos.AtualizarMediaAvaliacaoEERequest;
-import br.ufpr.mslocacoes.model.dto.espaco_esportivos.EspEsportivoBuscaResponse;
+import br.ufpr.mslocacoes.model.dto.cliente.NomeClienteResponse;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspEsportivoBuscaResponse;
 import br.ufpr.mslocacoes.model.dto.locacao.InformacoesComplementaresLocacaoRequest;
 import br.ufpr.mslocacoes.model.dto.locacao.InformacoesComplementaresLocacaoResponse;
 import br.ufpr.mslocacoes.security.TokenService;
@@ -22,6 +23,9 @@ public class MsCadastrosClient {
 
     @Value("${url.ms.cadastros.espacos_esportivos}")
     private String urlMsCadastroEE;
+
+    @Value("${url.ms.cadastros.clientes}")
+    private String urlMsCadastroCliente;
 
     public static final String AUTHORIZATION_USER = "AuthorizationUser";
 
@@ -64,5 +68,16 @@ public class MsCadastrosClient {
         HttpHeaders headers = gerarCabecalho();
         headers.set("AuthorizationApi", tokenService.gerarTokenMsLocacoes());
         restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(request, headers), Object.class);
+    }
+
+    public List<NomeClienteResponse> buscarNomesClientes(List<Long> request) {
+        String url = urlMsCadastroCliente + "/buscar-lista-nomes";
+        HttpHeaders headers = gerarCabecalho();
+        headers.set("AuthorizationApi", tokenService.gerarTokenMsLocacoes());
+        var response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), new ParameterizedTypeReference<List<Object>>() {}).getBody();
+        var listaNomes = new ArrayList<NomeClienteResponse>();
+        assert response != null;
+        response.forEach(obj -> listaNomes.add(new NomeClienteResponse(obj)));
+        return listaNomes;
     }
 }

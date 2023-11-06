@@ -58,6 +58,8 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
 
  List<Locacao> findByIdCliente(Long idCliente);
 
+ List<Locacao> findByIdEspacoEsportivo(Long idEspacoEsportivo);
+
  @Query(value = """
     SELECT *
     FROM tb_locacoes l

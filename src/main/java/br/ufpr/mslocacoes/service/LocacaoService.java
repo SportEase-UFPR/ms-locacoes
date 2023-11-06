@@ -3,8 +3,9 @@ package br.ufpr.mslocacoes.service;
 import br.ufpr.mslocacoes.client.MsCadastrosClient;
 import br.ufpr.mslocacoes.exceptions.BussinessException;
 import br.ufpr.mslocacoes.exceptions.EntityNotFoundException;
-import br.ufpr.mslocacoes.model.dto.espaco_esportivos.AtualizarMediaAvaliacaoEERequest;
-import br.ufpr.mslocacoes.model.dto.espaco_esportivos.EspEsportivoBuscaResponse;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.ComentarioEEResponse;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspEsportivoBuscaResponse;
 import br.ufpr.mslocacoes.model.dto.locacao.*;
 import br.ufpr.mslocacoes.model.entity.Locacao;
 import br.ufpr.mslocacoes.model.enums.StatusLocacao;
@@ -278,11 +279,35 @@ public class LocacaoService {
         }
         reserva.setAvaliacao(request.getAvaliacao());
         reserva.setComentarioCliente(request.getComentario());
+        reserva.setDataHoraComentario(LocalDateTime.now());
         locacaoRepository.save(reserva);
 
         //atualizar média de avaliações do espaço esportivo
         msCadastrosClient.atualizarMediaAvaliacaoEE(reserva.getIdEspacoEsportivo(), new AtualizarMediaAvaliacaoEERequest(request.getAvaliacao()));
 
         return null;
+    }
+
+    public List<ComentarioEEResponse> listarComentariosPorEspacoEsportivo(Long idEspacoEsportivo) {
+        //buscar todas as reservas do espaço esportivo especificado
+        var listaReservas = locacaoRepository.findByIdEspacoEsportivo(idEspacoEsportivo);
+
+        if(listaReservas.isEmpty()) {
+            throw new EntityNotFoundException("Não existem comentários para esse espaço esportivo");
+        }
+
+        //criando os objetos com os comentários
+        var listaComentarios = new ArrayList<ComentarioEEResponse>();
+        listaReservas.forEach(reserva -> listaComentarios.add(new ComentarioEEResponse(reserva)));
+
+        //buscar nomes dos clientes
+        var listaIdsClientes = listaReservas.stream()
+                .map(Locacao::getIdCliente)
+                .distinct()
+                .toList();
+        var listaNomesClientes = msCadastrosClient.buscarNomesClientes(listaIdsClientes);
+        listaComentarios.forEach(comentario -> comentario.preencherNomeCliente(listaNomesClientes));
+
+        return listaComentarios;
     }
 }

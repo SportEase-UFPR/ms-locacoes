@@ -54,6 +54,8 @@ public class Locacao {
 
     private String comentarioCliente;
 
+    private LocalDateTime dataHoraComentario;
+
     public Locacao(SolicitacaoLocacaoRequest solicitacao, Long idCliente) {
         this.motivoSolicitacao = solicitacao.getMotivoSolicitacao();
         this.qtdParticipantes = solicitacao.getQtdParticipantes();

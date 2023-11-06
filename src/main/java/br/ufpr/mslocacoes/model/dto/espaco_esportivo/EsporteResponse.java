@@ -1,4 +1,4 @@
-package br.ufpr.mslocacoes.model.dto.espaco_esportivos;
+package br.ufpr.mslocacoes.model.dto.espaco_esportivo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

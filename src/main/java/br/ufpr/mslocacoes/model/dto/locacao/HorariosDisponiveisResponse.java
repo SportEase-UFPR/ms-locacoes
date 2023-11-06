@@ -1,6 +1,6 @@
 package br.ufpr.mslocacoes.model.dto.locacao;
 
-import br.ufpr.mslocacoes.model.dto.espaco_esportivos.EspEsportivoBuscaResponse;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspEsportivoBuscaResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

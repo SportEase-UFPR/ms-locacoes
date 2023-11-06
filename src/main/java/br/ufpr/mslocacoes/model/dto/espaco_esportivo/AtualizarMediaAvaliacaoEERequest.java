@@ -1,4 +1,4 @@
-package br.ufpr.mslocacoes.model.dto.espaco_esportivos;
+package br.ufpr.mslocacoes.model.dto.espaco_esportivo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
