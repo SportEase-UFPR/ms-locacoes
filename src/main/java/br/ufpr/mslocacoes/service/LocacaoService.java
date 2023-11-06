@@ -14,9 +14,7 @@ import br.ufpr.mslocacoes.security.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class LocacaoService {
         }
 
         //verificar se dataHoraInicioReserva > horário atual
-        if(request.getDataHoraInicioReserva().isBefore(LocalDateTime.now())) {
+        if(request.getDataHoraInicioReserva().isBefore(ZonedDateTime.now(ZoneOffset.ofHours(-3)).toLocalDateTime())) {
             throw new BussinessException("dataHoraInicioReserva deve ser futuro a dataHora atual");
         }
 
