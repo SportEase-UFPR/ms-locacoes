@@ -50,6 +50,11 @@ public class LocacaoService {
             throw new BussinessException("Espaço esportivo está indisponível");
         }
 
+        //verificar se dataHoraInicioReserva > horário atual
+        if(request.getDataHoraInicioReserva().isBefore(LocalDateTime.now())) {
+            throw new BussinessException("dataHoraInicioReserva deve ser futuro a dataHora atual");
+        }
+
         //verificar se dataHoraFimReserva > dataHoraInicioReserva
         if(request.getDataHoraInicioReserva().isAfter(request.getDataHoraFimReserva())) {
             throw new BussinessException("dataHoraFimReserva deve ser futuro à dataHoraInicioReserva");

@@ -21,10 +21,8 @@ public class SolicitacaoLocacaoRequest {
     @NotNull(message = "O campo qtdParticipantes é obrigatório")
     private Integer qtdParticipantes;
 
-    @Future(message = "A data da reserva deve ser futura")
     private LocalDateTime dataHoraInicioReserva;
 
-    @Future(message = "A data da reserva deve ser futura")
     private LocalDateTime dataHoraFimReserva;
 
     @NotNull(message = "O idEspacoEsportivo é obrigatóio")
