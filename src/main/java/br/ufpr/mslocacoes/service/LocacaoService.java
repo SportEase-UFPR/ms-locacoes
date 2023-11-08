@@ -229,7 +229,7 @@ public class LocacaoService {
         var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
         var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA APROVADA!",
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI APROVADA!",
                 "Que notícia boa, sua reserva para o espaço '" + ee.getNome()
                 + "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi aprovada :)");
 
@@ -262,7 +262,7 @@ public class LocacaoService {
         var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
 
 
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA NEGADA",
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI NEGADA",
                 "Infelizmente sua reserva para o espaço '" + ee.getNome() +
                 "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi negada pelo seguinte motivo: "
                 + request.getJustificativa());
