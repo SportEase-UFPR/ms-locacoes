@@ -231,7 +231,7 @@ public class LocacaoService {
 
         msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA APROVADA!",
                 "Que notícia boa, sua reserva para o espaço '" + ee.getNome()
-                + "' no dia " + diaLocacao + " - (" + horaInicioLocacao + " às " + horaFimLocacao + ") foi aprovada :)");
+                + "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi aprovada :)");
 
         return null;
     }
@@ -264,7 +264,7 @@ public class LocacaoService {
 
         msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA NEGADA",
                 "Infelizmente sua reserva para o espaço '" + ee.getNome() +
-                "' no dia " + diaLocacao + " - (" + horaInicioLocacao + " às " + horaFimLocacao + ") foi negada pelo seguinte motivo: "
+                "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi negada pelo seguinte motivo: "
                 + request.getJustificativa());
         return null;
     }
