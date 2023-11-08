@@ -23,6 +23,7 @@ public class BuscaReservaResponse {
     private Long idAdministrador;
     private Long idCliente;
     private String motivoCancelamento;
+    private Integer avaliacao;
 
     public BuscaReservaResponse(Locacao reserva) {
         this.id = reserva.getId();
@@ -36,5 +37,6 @@ public class BuscaReservaResponse {
         this.idAdministrador = reserva.getIdAdministrador();
         this.idCliente = reserva.getIdCliente();
         this.motivoCancelamento = reserva.getMotivoCancelamento();
+        this.avaliacao = reserva.getAvaliacao();
     }
 }

@@ -1,6 +1,7 @@
 package br.ufpr.mslocacoes.service;
 
 import br.ufpr.mslocacoes.client.MsCadastrosClient;
+import br.ufpr.mslocacoes.client.MsNotificacaoClient;
 import br.ufpr.mslocacoes.exceptions.BussinessException;
 import br.ufpr.mslocacoes.exceptions.EntityNotFoundException;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
@@ -26,11 +27,13 @@ public class LocacaoService {
     private final TokenService tokenService;
     private final LocacaoRepository locacaoRepository;
     private final MsCadastrosClient msCadastrosClient;
+    private final MsNotificacaoClient msNotificacaoClient;
 
-    public LocacaoService(TokenService tokenService, LocacaoRepository locacaoRepository, MsCadastrosClient msCadastrosClient) {
+    public LocacaoService(TokenService tokenService, LocacaoRepository locacaoRepository, MsCadastrosClient msCadastrosClient, MsNotificacaoClient msNotificacaoClient) {
         this.tokenService = tokenService;
         this.locacaoRepository = locacaoRepository;
         this.msCadastrosClient = msCadastrosClient;
+        this.msNotificacaoClient = msNotificacaoClient;
     }
 
     public SolicitacaoLocacaoResponse solicitarLocacao(SolicitacaoLocacaoRequest request, String token) {
@@ -167,6 +170,10 @@ public class LocacaoService {
             throw new BussinessException("Status da locação não permite cancelamento");
         }
 
+        if(HORA_ATUAL.plusMinutes(15).isAfter(locacao.getDataHoraInicioReserva())) {
+            throw new BussinessException("Não é mais possível cancelar a reserva");
+        }
+
         locacao.setStatus(StatusLocacao.CANCELADA);
         locacaoRepository.save(locacao);
 
@@ -214,7 +221,9 @@ public class LocacaoService {
         locacao.setIdAdministrador(idAdm);
         locacaoRepository.save(locacao);
 
-        //TODO enviar notificação e email para o usuário informando que a reserva foi aprovada
+        //TODO enviar notificação via email e colocar os textos das notificações em outra classe
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA APROVADA", "sua reserva foi aprovada!");
+
         return null;
     }
 
@@ -237,7 +246,8 @@ public class LocacaoService {
         locacaoRepository.save(locacao);
 
 
-        //TODO enviar notificação e email para o usuário informando que a reserva foi negada
+        //TODO enviar notificação via email e colocar os textos das notificações em outra classe
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA NEGADA", "sua reserva foi negada. motivo: " + request.getJustificativa());
         return null;
     }
 
