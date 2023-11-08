@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,7 +223,15 @@ public class LocacaoService {
         locacaoRepository.save(locacao);
 
         //TODO enviar notificação via email e colocar os textos das notificações em outra classe
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA APROVADA", "sua reserva foi aprovada!");
+        var ee = msCadastrosClient.buscarEspacoEsportivoPorId(locacao.getIdEspacoEsportivo());
+
+        var diaLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+        var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA APROVADA!",
+                "Que notícia boa, sua reserva para o espaço '" + ee.getNome()
+                + "' no dia " + diaLocacao + " - (" + horaInicioLocacao + " às " + horaFimLocacao + ") foi aprovada :)");
 
         return null;
     }
@@ -247,7 +256,16 @@ public class LocacaoService {
 
 
         //TODO enviar notificação via email e colocar os textos das notificações em outra classe
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA NEGADA", "sua reserva foi negada. motivo: " + request.getJustificativa());
+        var ee = msCadastrosClient.buscarEspacoEsportivoPorId(locacao.getIdEspacoEsportivo());
+        var diaLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+        var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+
+
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "RESERVA NEGADA",
+                "Infelizmente sua reserva para o espaço '" + ee.getNome() +
+                "' no dia " + diaLocacao + " - (" + horaInicioLocacao + " às " + horaFimLocacao + ") foi negada pelo seguinte motivo: "
+                + request.getJustificativa());
         return null;
     }
 
