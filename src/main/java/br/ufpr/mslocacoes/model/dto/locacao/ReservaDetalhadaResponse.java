@@ -21,6 +21,7 @@ public class ReservaDetalhadaResponse {
     private LocalDateTime dataHoraFimReserva;
     private StatusLocacao status;
     private String motivoCancelamento;
+    private String motivoEncerramento;
     private String comentario;
     private Integer avaliacao;
 
@@ -36,6 +37,7 @@ public class ReservaDetalhadaResponse {
         this.dataHoraFimReserva = reserva.getDataHoraFimReserva();
         this.status = reserva.getStatus();
         this.motivoCancelamento = reserva.getMotivoCancelamento();
+        this.motivoEncerramento = reserva.getMotivoEncerramento();
         this.comentario = reserva.getComentarioCliente();
         this.avaliacao = reserva.getAvaliacao();
     }

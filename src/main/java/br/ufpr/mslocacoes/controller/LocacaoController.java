@@ -37,20 +37,6 @@ public class LocacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest));
     }
 
-    //Uso do cliente - Reservas em andamento
-    @GetMapping("/listar-reservas-em-andamento")
-    public ResponseEntity<List<BuscaReservaResponse>> listarReservasEmAndamento(
-            @RequestHeader("AuthorizationUser") String token) {
-        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasEmAndamento(token));
-    }
-
-    //Uso do cliente - histórico de reservas
-    @GetMapping("/listar-historico-reservas")
-    public ResponseEntity<List<BuscaReservaResponse>> listarHistoricoReservas(
-            @RequestHeader("AuthorizationUser") String token) {
-        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarHistoricoReservas(token));
-    }
-
     @PutMapping("/cancelar-reserva/{idReserva}")
     public ResponseEntity<Void> cancelarReserva(
             @PathVariable Long idReserva,
@@ -65,12 +51,6 @@ public class LocacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.confirmarUsoReserva(token, idReserva));
     }
 
-    //uso do adm - todas as reservas solicitadas
-    @GetMapping("/listar-reservas-solicitadas")
-    public ResponseEntity<List<ReservaDetalhadaResponse>> listarReservasSolicitadas() {
-        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasSolicitadas());
-    }
-
     @PutMapping("/aprovar-reserva/{idReserva}")
     public ResponseEntity<Void> aprovarReserva(@PathVariable Long idReserva, @RequestHeader("AuthorizationUser") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.aprovarReserva(idReserva, token));
@@ -81,6 +61,33 @@ public class LocacaoController {
                                              @RequestBody @Valid NegarReservaRequest negarReservaRequest,
                                              @RequestHeader("AuthorizationUser") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.negarReserva(idReserva, negarReservaRequest, token));
+    }
+
+    @PutMapping("/encerrar-reserva/{idReserva}")
+    public ResponseEntity<Void> encerrarReserva(@PathVariable Long idReserva,
+                                             @RequestBody @Valid EncerrarReservaRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.encerrarReserva(idReserva, request));
+    }
+
+    //Uso do cliente - Reservas em andamento
+    @GetMapping("/listar-reservas-em-andamento")
+    public ResponseEntity<List<BuscaReservaResponse>> listarReservasEmAndamento(
+            @RequestHeader("AuthorizationUser") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasEmAndamento(token));
+    }
+
+    //Uso do cliente - histórico de reservas
+    @GetMapping("/listar-historico-reservas")
+    public ResponseEntity<List<BuscaReservaResponse>> listarHistoricoReservas(
+            @RequestHeader("AuthorizationUser") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarHistoricoReservas(token));
+    }
+
+
+    //uso do adm - todas as reservas solicitadas
+    @GetMapping("/listar-reservas-solicitadas")
+    public ResponseEntity<List<ReservaDetalhadaResponse>> listarReservasSolicitadas() {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasSolicitadas());
     }
 
     //uso do adm - todas as reservas

@@ -25,6 +25,7 @@ public class BuscaReservaResponse {
     private Long idAdministrador;
     private Long idCliente;
     private String motivoCancelamento;
+    private String motivoEncerramento;
     private Integer avaliacao;
     private String nomeEspacoEsportivo;
     private String localidade;
@@ -42,6 +43,7 @@ public class BuscaReservaResponse {
         this.idCliente = reserva.getIdCliente();
         this.motivoCancelamento = reserva.getMotivoCancelamento();
         this.avaliacao = reserva.getAvaliacao();
+        this.motivoEncerramento = reserva.getMotivoEncerramento();
     }
 
     public void preencherEE(List<EspacoEsportivoSimplificado> lista) {

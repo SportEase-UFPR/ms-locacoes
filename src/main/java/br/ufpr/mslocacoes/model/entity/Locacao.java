@@ -52,6 +52,8 @@ public class Locacao {
 
     private String motivoCancelamento;
 
+    private String motivoEncerramento;
+
     private Integer avaliacao;
 
     private String comentarioCliente;

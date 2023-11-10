@@ -285,6 +285,32 @@ public class LocacaoService {
         return null;
     }
 
+    public Void encerrarReserva(Long idReserva, EncerrarReservaRequest request) {
+        //recuperar reserva
+        Locacao locacao = locacaoRepository.findById(idReserva)
+                .orElseThrow(() -> new EntityNotFoundException("Locação não encontrada"));
+
+        locacao.setStatus(StatusLocacao.ENCERRADA);
+        if(request.getJustificativa() != null) {
+            locacao.setMotivoEncerramento(request.getJustificativa());
+        }
+        locacaoRepository.save(locacao);
+
+        //TODO enviar notificação via email e colocar os textos das notificações em outra classe
+        var ee = msCadastrosClient.buscarEspacoEsportivoPorId(locacao.getIdEspacoEsportivo());
+        var diaLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+        var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+
+
+        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI ENCERRADA",
+                "Sua reserva para o espaço '" + ee.getNome() + "' no dia " + diaLocacao + " - "
+                + horaInicioLocacao + " às " + horaFimLocacao + " foi encerrada pelo administrador."
+                + (request.getJustificativa() != null ? " Justificativa: " + request.getJustificativa() : ""));
+
+        return null;
+    }
+
     public List<ReservaDetalhadaResponse> buscarRelatorioDeReservas() {
         var listaReservas = locacaoRepository.findAll();
         return buscarDetalhesReserva(listaReservas);
@@ -359,4 +385,5 @@ public class LocacaoService {
 
         return listaComentarios;
     }
+
 }
