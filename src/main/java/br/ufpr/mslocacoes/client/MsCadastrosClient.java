@@ -3,6 +3,7 @@ package br.ufpr.mslocacoes.client;
 import br.ufpr.mslocacoes.model.dto.cliente.NomeClienteResponse;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspEsportivoBuscaResponse;
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspacoEsportivoSimplificado;
 import br.ufpr.mslocacoes.model.dto.locacao.InformacoesComplementaresLocacaoRequest;
 import br.ufpr.mslocacoes.model.dto.locacao.InformacoesComplementaresLocacaoResponse;
 import br.ufpr.mslocacoes.security.TokenService;
@@ -79,5 +80,16 @@ public class MsCadastrosClient {
         assert response != null;
         response.forEach(obj -> listaNomes.add(new NomeClienteResponse(obj)));
         return listaNomes;
+    }
+
+    public List<EspacoEsportivoSimplificado> buscarEspacoesEsportivosSimplificado(List<Long> request) {
+        String url = urlMsCadastroEE + "/buscar-lista-ee-simplificado";
+        HttpHeaders headers = gerarCabecalho();
+        headers.set("AuthorizationApi", tokenService.gerarTokenMsLocacoes());
+        var response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), new ParameterizedTypeReference<List<Object>>() {}).getBody();
+        var listaEE = new ArrayList<EspacoEsportivoSimplificado>();
+        assert response != null;
+        response.forEach(obj -> listaEE.add(new EspacoEsportivoSimplificado(obj)));
+        return listaEE;
     }
 }

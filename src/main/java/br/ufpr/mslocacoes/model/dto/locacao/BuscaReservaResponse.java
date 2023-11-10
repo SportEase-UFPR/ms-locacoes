@@ -1,5 +1,6 @@
 package br.ufpr.mslocacoes.model.dto.locacao;
 
+import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspacoEsportivoSimplificado;
 import br.ufpr.mslocacoes.model.entity.Locacao;
 import br.ufpr.mslocacoes.model.enums.StatusLocacao;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -24,6 +26,8 @@ public class BuscaReservaResponse {
     private Long idCliente;
     private String motivoCancelamento;
     private Integer avaliacao;
+    private String nomeEspacoEsportivo;
+    private String localidade;
 
     public BuscaReservaResponse(Locacao reserva) {
         this.id = reserva.getId();
@@ -38,5 +42,14 @@ public class BuscaReservaResponse {
         this.idCliente = reserva.getIdCliente();
         this.motivoCancelamento = reserva.getMotivoCancelamento();
         this.avaliacao = reserva.getAvaliacao();
+    }
+
+    public void preencherEE(List<EspacoEsportivoSimplificado> lista) {
+        lista.forEach(item -> {
+            if(item.getId().equals(idEspacoEsportivo)) {
+                this.nomeEspacoEsportivo = item.getNome();
+                this.localidade = item.getLocalidade();
+            }
+        });
     }
 }

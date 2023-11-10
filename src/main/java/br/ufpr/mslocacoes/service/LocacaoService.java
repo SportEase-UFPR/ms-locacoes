@@ -148,25 +148,29 @@ public class LocacaoService {
     }
 
     public List<BuscaReservaResponse> listarReservasEmAndamento(String token) {
-        //recuperar id do cliente do token
         Long idCliente = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
-
         List<Locacao> listaReservas = locacaoRepository.listarReservasEmAndamento(idCliente);
-
-        List<BuscaReservaResponse> response = new ArrayList<>();
-        listaReservas.forEach(reserva -> response.add(new BuscaReservaResponse(reserva)));
-        return response;
+        return processarReservas(listaReservas);
     }
 
-
     public List<BuscaReservaResponse> listarHistoricoReservas(String token) {
-        //recuperar id do cliente do token
         Long idCliente = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
-
         List<Locacao> listaReservas = locacaoRepository.findByIdCliente(idCliente);
+        return processarReservas(listaReservas);
+    }
 
+    public List<BuscaReservaResponse> processarReservas(List<Locacao> listaReservas) {
         List<BuscaReservaResponse> response = new ArrayList<>();
         listaReservas.forEach(reserva -> response.add(new BuscaReservaResponse(reserva)));
+
+        // buscar espaço esportivo
+        var listaIdsEE = listaReservas.stream()
+                .map(Locacao::getIdEspacoEsportivo)
+                .distinct()
+                .toList();
+        var listaEE = msCadastrosClient.buscarEspacoesEsportivosSimplificado(listaIdsEE);
+        response.forEach(reserva -> reserva.preencherEE(listaEE));
+
         return response;
     }
 

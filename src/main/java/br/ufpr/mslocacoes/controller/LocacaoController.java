@@ -37,12 +37,14 @@ public class LocacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest));
     }
 
+    //Uso do cliente - Reservas em andamento
     @GetMapping("/listar-reservas-em-andamento")
     public ResponseEntity<List<BuscaReservaResponse>> listarReservasEmAndamento(
             @RequestHeader("AuthorizationUser") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasEmAndamento(token));
     }
 
+    //Uso do cliente - histórico de reservas
     @GetMapping("/listar-historico-reservas")
     public ResponseEntity<List<BuscaReservaResponse>> listarHistoricoReservas(
             @RequestHeader("AuthorizationUser") String token) {
@@ -62,6 +64,8 @@ public class LocacaoController {
             @RequestHeader("AuthorizationUser") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.confirmarUsoReserva(token, idReserva));
     }
+
+    //uso do adm - todas as reservas solicitadas
     @GetMapping("/listar-reservas-solicitadas")
     public ResponseEntity<List<ReservaDetalhadaResponse>> listarReservasSolicitadas() {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarReservasSolicitadas());
@@ -79,6 +83,7 @@ public class LocacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.negarReserva(idReserva, negarReservaRequest, token));
     }
 
+    //uso do adm - todas as reservas
     @GetMapping("/relatorio-reservas")
     public ResponseEntity<List<ReservaDetalhadaResponse>> buscarRelatorioDeReservas() {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarRelatorioDeReservas());
