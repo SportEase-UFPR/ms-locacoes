@@ -38,8 +38,10 @@ public class LocacaoService {
     }
 
     public SolicitacaoLocacaoResponse solicitarLocacao(SolicitacaoLocacaoRequest request, String token) {
+        var dataHoraInicioReserva = request.getDataHoraInicioReserva();
+        var dataHoraFimReserva = request.getDataHoraFimReserva();
         //recuperar id do cliente do token
-        Long idCliente = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
+        var idCliente = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
 
         //Recuperar espaço esportivo
         EspEsportivoBuscaResponse ee = null;
@@ -55,34 +57,27 @@ public class LocacaoService {
         }
 
         //verificar se dataHoraInicioReserva > horário atual
-        if(request.getDataHoraInicioReserva().isBefore(HORA_ATUAL)) {
+        if(dataHoraInicioReserva.isBefore(HORA_ATUAL)) {
             throw new BussinessException("dataHoraInicioReserva deve ser futuro a dataHora atual");
         }
 
         //verificar se dataHoraFimReserva > dataHoraInicioReserva
-        if(request.getDataHoraInicioReserva().isAfter(request.getDataHoraFimReserva())) {
+        if(dataHoraInicioReserva.isAfter(dataHoraFimReserva)) {
             throw new BussinessException("dataHoraFimReserva deve ser futuro à dataHoraInicioReserva");
         }
 
         //verificar se dataHoraInicioReserva e dataHoraFimReserva pertencem ao mesmo dia
-        if(!request.getDataHoraInicioReserva().toLocalDate().isEqual(request.getDataHoraFimReserva().toLocalDate())) {
+        if(!dataHoraInicioReserva.toLocalDate().isEqual(dataHoraFimReserva.toLocalDate())) {
             throw new BussinessException("o início e o fim de uma reserva deve pertencer ao mesmo dia");
         }
 
-        //verificar se o tempo entre dataHoraInicioReserva e dataHoraFimReserva não excede o tempo máximo permitido
-        Duration duracaoLocacao = Duration.between(request.getDataHoraInicioReserva(), request.getDataHoraFimReserva());
-        Duration duracaoCiclo = Duration.between(LocalTime.MIN, ee.getPeriodoLocacao());
-        if(duracaoLocacao.toMillis() > ee.getMaxLocacaoDia() * duracaoCiclo.toMillis()) {
-            throw new BussinessException("o período de locação solicitado excede o máximo permitido");
-        }
-
         //verificar se dataHoraInicioReserva >= horarioAbertura
-        if(request.getDataHoraInicioReserva().toLocalTime().isBefore(ee.getHoraAbertura())) {
+        if(dataHoraInicioReserva.toLocalTime().isBefore(ee.getHoraAbertura())) {
             throw new BussinessException("dataHoraInicioReserva não está dentro do período de funcionamento do espaço esportivo");
         }
 
         //verificar se dataHoraFimReserva <= horarioAbertura
-        if(request.getDataHoraFimReserva().toLocalTime().isAfter(ee.getHoraFechamento())) {
+        if(dataHoraFimReserva.toLocalTime().isAfter(ee.getHoraFechamento())) {
             throw new BussinessException("dataHoraFimReserva não está dentro do período de funcionamento do espaço esportivo");
         }
 
@@ -97,6 +92,23 @@ public class LocacaoService {
         if(locacaoRepository.existeConflitoDeHorarioCliente(request.getDataHoraInicioReserva(), idCliente) == 1
         ) {
             throw new BussinessException("O cliente já solicitou uma reserva para esse dia e horário informado");
+        }
+
+        //verificar se o tempo de locação não excede o máximo permitido
+        var duracaoLocacao = Duration.between(dataHoraInicioReserva, dataHoraFimReserva);
+        var duracaoTotal = duracaoLocacao;
+
+        var possiveisLocacoesExistentes = locacaoRepository.buscarLocacaoPorDiaEIdClienteEEspacoEsportivo(idCliente, request.getDataHoraInicioReserva().toLocalDate(), request.getIdEspacoEsportivo());
+        for (var locacao : possiveisLocacoesExistentes) {
+            var horaInicio = locacao.getDataHoraInicioReserva();
+            var horaFim = locacao.getDataHoraFimReserva();
+            duracaoLocacao = Duration.between(horaInicio, horaFim);
+            duracaoTotal = duracaoTotal.plus(duracaoLocacao);
+        }
+
+        var duracaoCiclo = Duration.between(LocalTime.MIN, ee.getPeriodoLocacao());
+        if(duracaoTotal.toMillis() > ee.getMaxLocacaoDia() * duracaoCiclo.toMillis()) {
+            throw new BussinessException("o período de locação solicitado excede o máximo permitido");
         }
 
         //Criar locação
