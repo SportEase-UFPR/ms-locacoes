@@ -53,53 +53,52 @@ public class LocacaoService {
 
         //se espaço esportivo não está disponível, lançar exceção
         if(Boolean.FALSE.equals(ee.getDisponivel())) {
-            throw new BussinessException("Espaço esportivo está indisponível");
+            throw new BussinessException("Espaço esportivo não está disponível");
         }
 
         //se o dia da semana não for condizente com os dias possíveis para locação, lançar exceção
         var diaSemana = request.getDataHoraInicioReserva().getDayOfWeek().getValue() - 1;
 
         if(!ee.getDiasFuncionamento().contains(diaSemana)) {
-            throw new BussinessException("O dia da semana não permite a locação do espaço esportivo");
+            throw new BussinessException("O espaço esportivo não permite reservas nesse dia da semana");
         }
 
 
         //verificar se dataHoraInicioReserva > horário atual
         if(dataHoraInicioReserva.isBefore(HORA_ATUAL)) {
-            throw new BussinessException("dataHoraInicioReserva deve ser futuro a dataHora atual");
+            throw new BussinessException("A data e hora iniciais da reserva devem ser futuras à data e hora atual");
         }
 
         //verificar se dataHoraFimReserva > dataHoraInicioReserva
         if(dataHoraInicioReserva.isAfter(dataHoraFimReserva)) {
-            throw new BussinessException("dataHoraFimReserva deve ser futuro à dataHoraInicioReserva");
+            throw new BussinessException("A data e hora finais da reserva deve ser futuras à data e hora incial da reserva");
         }
 
         //verificar se dataHoraInicioReserva e dataHoraFimReserva pertencem ao mesmo dia
         if(!dataHoraInicioReserva.toLocalDate().isEqual(dataHoraFimReserva.toLocalDate())) {
-            throw new BussinessException("o início e o fim de uma reserva deve pertencer ao mesmo dia");
+            throw new BussinessException("O horário de início e o de fim de uma reserva devem pertencer ao mesmo dia");
         }
 
         //verificar se dataHoraInicioReserva >= horarioAbertura
         if(dataHoraInicioReserva.toLocalTime().isBefore(ee.getHoraAbertura())) {
-            throw new BussinessException("dataHoraInicioReserva não está dentro do período de funcionamento do espaço esportivo");
+            throw new BussinessException("A date a a hora de início da reserva não estão dentro do período de funcionamento do espaço esportivo");
         }
 
         //verificar se dataHoraFimReserva <= horarioAbertura
         if(dataHoraFimReserva.toLocalTime().isAfter(ee.getHoraFechamento())) {
-            throw new BussinessException("dataHoraFimReserva não está dentro do período de funcionamento do espaço esportivo");
+            throw new BussinessException("A data e a hora de fim da reserva não estão dentro do período de funcionamento do espaço esportivo");
         }
 
         //verificar se há conflito de horário para o espaço esportivo escolhido
         if(locacaoRepository.existeConflitoDeHorarioEspacoEsportivo(request.getDataHoraInicioReserva(), request.getIdEspacoEsportivo()) == 1
         ) {
-            throw new BussinessException("já existe uma reserva para esse horário no espaço esportivo informado");
+            throw new BussinessException("Já existe uma reserva para essa data e horário no espaço esportivo informado");
         }
-
 
         //verificar se o cliente já não solicitou uma reserva em algum espaço esportivo no mesmo dia e horário informado.
         if(locacaoRepository.existeConflitoDeHorarioCliente(request.getDataHoraInicioReserva(), idCliente) == 1
         ) {
-            throw new BussinessException("O cliente já solicitou uma reserva para esse dia e horário informado");
+            throw new BussinessException("Você já solicitou uma reserva para esse data e horário informado");
         }
 
         //verificar se o tempo de locação não excede o máximo permitido
@@ -116,7 +115,7 @@ public class LocacaoService {
 
         var duracaoCiclo = Duration.between(LocalTime.MIN, ee.getPeriodoLocacao());
         if(duracaoTotal.toMillis() > ee.getMaxLocacaoDia() * duracaoCiclo.toMillis()) {
-            throw new BussinessException("o período de locação solicitado excede o máximo permitido");
+            throw new BussinessException("Você já atingiu o limite de reservas do dia para o espaço esportivo escolhido");
         }
 
         //Criar locação
