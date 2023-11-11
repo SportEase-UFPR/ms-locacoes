@@ -56,7 +56,8 @@ public class EspEsportivoBuscaResponse {
             listaEsportesObj.forEach(esporte -> this.listaEsportes.add(new EsporteResponse(esporte)));
 
             ArrayList<?> diasFuncionamentoObj = (ArrayList<?>) hm.get("diasFuncionamento");
-            diasFuncionamentoObj.forEach(dia -> this.diasFuncionamento.add((Integer) dia));
+
+            this.diasFuncionamento = (ArrayList<Integer>) diasFuncionamentoObj; //pode confiar =D
 
             this.imagemBase64 = (String) hm.get("imagemBase64");
         }
