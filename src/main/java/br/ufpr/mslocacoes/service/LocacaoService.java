@@ -56,6 +56,14 @@ public class LocacaoService {
             throw new BussinessException("Espaço esportivo está indisponível");
         }
 
+        //se o dia da semana não for condizente com os dias possíveis para locação, lançar exceção
+        var diaSemana = request.getDataHoraInicioReserva().getDayOfWeek().getValue() - 1;
+
+        if(!ee.getDiasFuncionamento().contains(diaSemana)) {
+            throw new BussinessException("O dia da semana não permite a locação do espaço esportivo");
+        }
+
+
         //verificar se dataHoraInicioReserva > horário atual
         if(dataHoraInicioReserva.isBefore(HORA_ATUAL)) {
             throw new BussinessException("dataHoraInicioReserva deve ser futuro a dataHora atual");
