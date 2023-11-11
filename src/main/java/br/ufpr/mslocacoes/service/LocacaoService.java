@@ -394,4 +394,14 @@ public class LocacaoService {
         return listaComentarios;
     }
 
+    public List<EstatisticasReservaResponse> buscarEstatisticasReserva() {
+        var tuplas = locacaoRepository.buscarEstatisticasReservas();
+        var listaEstatisticasReservaResponse = locacaoRepository.converterTuplesParaEstatisticasReservaResponse(tuplas);
+        var listaEstatistica = new ArrayList<EstatisticasReservaResponse>();
+
+        listaEstatisticasReservaResponse.forEach(estatistica -> listaEstatistica.add(new EstatisticasReservaResponse(estatistica)));
+
+        return listaEstatistica;
+    }
+
 }

@@ -2,6 +2,7 @@ package br.ufpr.mslocacoes.controller;
 
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.ComentarioEEResponse;
 import br.ufpr.mslocacoes.model.dto.locacao.*;
+import br.ufpr.mslocacoes.security.TokenService;
 import br.ufpr.mslocacoes.service.LocacaoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,11 @@ import java.util.List;
 public class LocacaoController {
 
     private final LocacaoService locacaoService;
+    private final TokenService tokenService;
 
-    public LocacaoController(LocacaoService locacaoService) {
+    public LocacaoController(LocacaoService locacaoService, TokenService tokenService) {
         this.locacaoService = locacaoService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/solicitar-locacao")
@@ -106,5 +109,11 @@ public class LocacaoController {
     @GetMapping("/comentarios/{idEspacoEsportivo}")
     public ResponseEntity<List<ComentarioEEResponse>> listarComentariosPorEspacoEsportivo(@PathVariable Long idEspacoEsportivo) {
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.listarComentariosPorEspacoEsportivo(idEspacoEsportivo));
+    }
+
+    @GetMapping("/estatisticas-reserva")
+    public ResponseEntity<List<EstatisticasReservaResponse>> buscarEstatisticasReserva(@RequestHeader("AuthorizationApi") String token) {
+        tokenService.validarTokenApiMsCadastros(token);
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarEstatisticasReserva());
     }
 }

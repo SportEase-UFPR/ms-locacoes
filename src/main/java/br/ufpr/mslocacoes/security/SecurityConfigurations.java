@@ -33,7 +33,8 @@ public class SecurityConfigurations {
                 .cors() // Adicionar essa linha para habilitar o suporte a CORS
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //desabilita a autenticação stateful que utiliza sessões e página de login do spring security
-                .and().authorizeHttpRequests() //nada será autorizado. Todas as requisições precisarão do token gerado na api gateway
+                .and().authorizeHttpRequests()
+                .requestMatchers(HttpMethod.GET, "/locacoes/estatisticas-reserva").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) //serve para chamar o filtro (SecurityFilter) antes do filtro do spring
                 .build();

@@ -1,9 +1,12 @@
 package br.ufpr.mslocacoes.repository;
 
+import br.ufpr.mslocacoes.model.dto.locacao.EstatisticasReservaResponse;
 import br.ufpr.mslocacoes.model.entity.Locacao;
+import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -72,5 +75,46 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
     WHERE  l.id_cliente = ?1  AND DATE(l.data_hora_inicio_reserva) = ?2 and l.id_espaco_esportivo = ?3
     """, nativeQuery = true)
     List<Locacao> buscarLocacaoPorDiaEIdClienteEEspacoEsportivo(Long idCliente, LocalDate data, Long idEspacoEsportivo);
+
+ @Query(value = """
+        SELECT
+            id_cliente as idCliente,
+            COUNT(*) as totalReservas,
+            SUM(CASE WHEN status = 'SOLICITADA' THEN 1 ELSE 0 END) as totalReservasSolicitadas,
+            SUM(CASE WHEN status = 'CANCELADA' THEN 1 ELSE 0 END) as totalReservasCanceladas,
+            SUM(CASE WHEN status = 'APROVADA' THEN 1 ELSE 0 END) as totalReservasAprovadas,
+            SUM(CASE WHEN status = 'NEGADA' THEN 1 ELSE 0 END) as totalReservasNegadas,
+            SUM(CASE WHEN status = 'FINALIZADA' THEN 1 ELSE 0 END) as totalReservasFinalizadas,
+            SUM(CASE WHEN status = 'ENCERRADA' THEN 1 ELSE 0 END) as totalReservasEncerradas
+        FROM
+            tb_locacoes
+        GROUP BY
+            id_cliente;
+        """, nativeQuery = true)
+ List<Tuple> buscarEstatisticasReservas();
+
+
+ default List<EstatisticasReservaResponse> converterTuplesParaEstatisticasReservaResponse(List<Tuple> tuples) {
+  return tuples.stream()
+          .map(this::converterTupleParaEstatisticasReservaResponse)
+          .toList();
+ }
+
+ private EstatisticasReservaResponse converterTupleParaEstatisticasReservaResponse(Tuple tuple) {
+  return EstatisticasReservaResponse.builder()
+          .idCliente(tuple.get("idCliente", Long.class))
+          .totalReservas(tuple.get("totalReservas", Long.class).intValue())
+          .totalReservasSolicitadas(tuple.get("totalReservasSolicitadas", BigDecimal.class).intValue())
+          .totalReservasCanceladas(tuple.get("totalReservasCanceladas", BigDecimal.class).intValue())
+          .totalReservasAprovadas(tuple.get("totalReservasAprovadas", BigDecimal.class).intValue())
+          .totalReservasNegadas(tuple.get("totalReservasNegadas", BigDecimal.class).intValue())
+          .totalReservasFinalizadas(tuple.get("totalReservasFinalizadas", BigDecimal.class).intValue())
+          .totalReservasEncerradas(tuple.get("totalReservasEncerradas", BigDecimal.class).intValue())
+          .build();
+ }
+
+
+
+
 
 }

@@ -29,6 +29,11 @@ public class TokenService {
     @Value("${api.mslocacoes.issuer}")
     private String msLocacoesIssuer;
 
+    @Value("${api.mscadastros.issuer}")
+    private String msCadastrosIssuer;
+
+    @Value("${api.security.token.mscadastros.secret}")
+    private String msCadastrosSecret;
 
     public void validarToken(String tokenJWT) {
         var tokenFormatado = removerPrefixoToken(tokenJWT);
@@ -70,5 +75,19 @@ public class TokenService {
 
     private Instant dataExpiracao(Integer minutes) {
         return LocalDateTime.now().plusMinutes(minutes).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public void validarTokenApiMsCadastros(String tokenApi) {
+        var tokenFormatado = removerPrefixoToken(tokenApi);
+        try {
+            var algoritmo = Algorithm.HMAC256(msCadastrosSecret);
+            JWT.require(algoritmo)
+                    .withIssuer(msCadastrosIssuer)
+                    .build()
+                    .verify(tokenFormatado);
+        } catch (JWTVerificationException ex) {
+            log.error(ex.getMessage());
+            throw new TokenInvalidoException("Token JWT inválido ou expirado");
+        }
     }
 }
