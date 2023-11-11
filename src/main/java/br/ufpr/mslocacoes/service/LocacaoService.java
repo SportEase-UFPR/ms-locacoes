@@ -144,12 +144,12 @@ public class LocacaoService {
 
         // Remover as horas que já estão ocupadas
         locacoes.forEach(locacao -> {
-            LocalTime horaInteiraInicio = locacao.getDataHoraInicioReserva().toLocalTime();
-            LocalTime horaInteiraFim = locacao.getDataHoraFimReserva().toLocalTime();
+            LocalTime horaInicio = locacao.getDataHoraInicioReserva().toLocalTime();
+            LocalTime horaFim = locacao.getDataHoraFimReserva().toLocalTime();
 
             response.getHorariosDisponiveis().removeIf(hora ->
-                    (hora.equals(horaInteiraInicio) || hora.isAfter(horaInteiraInicio)) &&
-                    hora.isBefore(horaInteiraFim));
+                    (hora.equals(horaInicio) || hora.isAfter(horaInicio)) &&
+                    hora.isBefore(horaFim));
         });
 
         return response;
