@@ -13,18 +13,15 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Service
-public class MsNotificacaoClient {
+public class MsComunicacoesClient {
 
-    @Value("${url.ms.comunicacoes.notificacoes}")
-    private String urlMsNotificacoes;
-
-
-    public static final String AUTHORIZATION_USER = "AuthorizationUser";
+    @Value("${url.ms.comunicacoes}")
+    private String urlMsComunicacoes;
 
     private final RestTemplate restTemplate;
     private final TokenService tokenService;
 
-    public MsNotificacaoClient(RestTemplate restTemplate, TokenService tokenService) {
+    public MsComunicacoesClient(RestTemplate restTemplate, TokenService tokenService) {
         this.restTemplate = restTemplate;
         this.tokenService = tokenService;
     }
@@ -32,13 +29,13 @@ public class MsNotificacaoClient {
     private HttpHeaders gerarCabecalho() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("AuthorizationApi", tokenService.gerarTokenMsLocacoes());
+        headers.set("AuthorizationApi", tokenService.gerarTokenMs());
         return headers;
     }
 
 
     public void criarNotificacao(Long idCliente, String titulo, String conteudo) {
-        String url = urlMsNotificacoes;
+        String url = urlMsComunicacoes + "/notificacoes";
         HttpHeaders headers = gerarCabecalho();
 
         var body  = CriacaoNotificacaoRequest.builder()

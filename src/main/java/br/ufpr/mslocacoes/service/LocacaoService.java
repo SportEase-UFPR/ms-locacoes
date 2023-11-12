@@ -1,7 +1,7 @@
 package br.ufpr.mslocacoes.service;
 
 import br.ufpr.mslocacoes.client.MsCadastrosClient;
-import br.ufpr.mslocacoes.client.MsNotificacaoClient;
+import br.ufpr.mslocacoes.client.MsComunicacoesClient;
 import br.ufpr.mslocacoes.exceptions.BussinessException;
 import br.ufpr.mslocacoes.exceptions.EntityNotFoundException;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
@@ -28,13 +28,13 @@ public class LocacaoService {
     private final TokenService tokenService;
     private final LocacaoRepository locacaoRepository;
     private final MsCadastrosClient msCadastrosClient;
-    private final MsNotificacaoClient msNotificacaoClient;
+    private final MsComunicacoesClient msComunicacoesClient;
 
-    public LocacaoService(TokenService tokenService, LocacaoRepository locacaoRepository, MsCadastrosClient msCadastrosClient, MsNotificacaoClient msNotificacaoClient) {
+    public LocacaoService(TokenService tokenService, LocacaoRepository locacaoRepository, MsCadastrosClient msCadastrosClient, MsComunicacoesClient msComunicacoesClient) {
         this.tokenService = tokenService;
         this.locacaoRepository = locacaoRepository;
         this.msCadastrosClient = msCadastrosClient;
-        this.msNotificacaoClient = msNotificacaoClient;
+        this.msComunicacoesClient = msComunicacoesClient;
     }
 
     public SolicitacaoLocacaoResponse solicitarLocacao(SolicitacaoLocacaoRequest request, String token) {
@@ -253,7 +253,7 @@ public class LocacaoService {
         var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
         var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI APROVADA!",
+        msComunicacoesClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI APROVADA!",
                 "Que notícia boa, sua reserva para o espaço '" + ee.getNome()
                 + "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi aprovada :)");
 
@@ -286,7 +286,7 @@ public class LocacaoService {
         var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
 
 
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI NEGADA",
+        msComunicacoesClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI NEGADA",
                 "Infelizmente sua reserva para o espaço '" + ee.getNome() +
                 "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi negada pelo seguinte motivo: "
                 + request.getJustificativa());
@@ -311,7 +311,7 @@ public class LocacaoService {
         var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
 
 
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI ENCERRADA",
+        msComunicacoesClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI ENCERRADA",
                 "Sua reserva para o espaço '" + ee.getNome() + "' no dia " + diaLocacao + " - "
                 + horaInicioLocacao + " às " + horaFimLocacao + " foi encerrada pelo administrador."
                 + (request.getJustificativa() != null ? " Justificativa: " + request.getJustificativa() : ""));

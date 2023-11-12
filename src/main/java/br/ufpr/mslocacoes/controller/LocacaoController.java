@@ -113,7 +113,7 @@ public class LocacaoController {
 
     @GetMapping("/estatisticas-reserva")
     public ResponseEntity<List<EstatisticasReservaResponse>> buscarEstatisticasReserva(@RequestHeader("AuthorizationApi") String token) {
-        tokenService.validarTokenApiMsCadastros(token);
+        tokenService.validarTokenMs(token);
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarEstatisticasReserva());
     }
 }
