@@ -57,7 +57,7 @@ public class LocacaoService {
         }
 
         //se o dia da semana não for condizente com os dias possíveis para locação, lançar exceção
-        var diaSemana = request.getDataHoraInicioReserva().getDayOfWeek().getValue();
+        var diaSemana = request.getDataHoraInicioReserva().getDayOfWeek().getValue() - 1;
 
         if(!ee.getDiasFuncionamento().contains(diaSemana)) {
             throw new BussinessException("O espaço esportivo não permite reservas nesse dia da semana");
