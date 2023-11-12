@@ -20,7 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static br.ufpr.mslocacoes.constants.HorarioBrasil.HORA_ATUAL;
+import static br.ufpr.mslocacoes.utils.HorarioBrasil.buscarHoraAtual;
+
 
 @Service
 public class LocacaoService {
@@ -66,7 +67,7 @@ public class LocacaoService {
 
 
         //verificar se dataHoraInicioReserva > horário atual
-        if(dataHoraInicioReserva.isBefore(HORA_ATUAL)) {
+        if(dataHoraInicioReserva.isBefore(buscarHoraAtual())) {
             throw new BussinessException("A data e hora iniciais da reserva devem ser futuras à data e hora atual");
         }
 
@@ -195,7 +196,7 @@ public class LocacaoService {
             throw new BussinessException("Status da locação não permite cancelamento");
         }
 
-        if(HORA_ATUAL.plusMinutes(15).isAfter(locacao.getDataHoraInicioReserva())) {
+        if(buscarHoraAtual().plusMinutes(15).isAfter(locacao.getDataHoraInicioReserva())) {
             throw new BussinessException("Não é mais possível cancelar a reserva");
         }
 
@@ -219,7 +220,7 @@ public class LocacaoService {
         }
 
         //só é possível confirmar uso se o horário do inicio da reserva superou o horário atual
-        if(HORA_ATUAL.isBefore(locacao.getDataHoraInicioReserva())) {
+        if(buscarHoraAtual().isBefore(locacao.getDataHoraInicioReserva())) {
             throw new BussinessException("Só é possível confirmar o uso após o início do horário da reserva");
         }
 
@@ -362,7 +363,7 @@ public class LocacaoService {
         }
         reserva.setAvaliacao(request.getAvaliacao());
         reserva.setComentarioCliente(request.getComentario());
-        reserva.setDataHoraComentario(HORA_ATUAL);
+        reserva.setDataHoraComentario(buscarHoraAtual());
         locacaoRepository.save(reserva);
 
         //atualizar média de avaliações do espaço esportivo

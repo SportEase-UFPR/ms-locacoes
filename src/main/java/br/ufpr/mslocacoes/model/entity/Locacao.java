@@ -10,7 +10,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import static br.ufpr.mslocacoes.constants.HorarioBrasil.HORA_ATUAL;
+import static br.ufpr.mslocacoes.utils.HorarioBrasil.buscarHoraAtual;
+
 
 @Entity(name = "tb_locacoes")
 @Getter
@@ -63,7 +64,7 @@ public class Locacao {
     public Locacao(SolicitacaoLocacaoRequest solicitacao, Long idCliente) {
         this.motivoSolicitacao = solicitacao.getMotivoSolicitacao();
         this.qtdParticipantes = solicitacao.getQtdParticipantes();
-        this.dataHoraSolicitacao = HORA_ATUAL;
+        this.dataHoraSolicitacao = buscarHoraAtual();
         this.dataHoraInicioReserva = solicitacao.getDataHoraInicioReserva();
         this.dataHoraFimReserva = solicitacao.getDataHoraFimReserva();
         this.status = StatusLocacao.SOLICITADA;
