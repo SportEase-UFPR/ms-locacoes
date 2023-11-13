@@ -67,7 +67,7 @@ public class MsCadastrosClient {
     }
 
     public List<NomeClienteResponse> buscarNomesClientes(List<Long> request) {
-        String url = urlMsCadastro + "/espacos-esportivos/buscar-lista-nomes";
+        String url = urlMsCadastro + "/clientes/buscar-lista-nomes";
         HttpHeaders headers = gerarCabecalho();
         var response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), new ParameterizedTypeReference<List<Object>>() {}).getBody();
         var listaNomes = new ArrayList<NomeClienteResponse>();
