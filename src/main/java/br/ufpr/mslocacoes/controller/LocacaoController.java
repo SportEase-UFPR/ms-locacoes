@@ -36,7 +36,6 @@ public class LocacaoController {
     @PostMapping("/horarios-disponiveis")
     public ResponseEntity<HorariosDisponiveisResponse> verificarHorariosDisponiveisParaLocacao(
             @Valid @RequestBody HorarioDisponivelRequest horarioDisponivelRequest) {
-        log.info("INICIO verificarHorariosDisponiveisParaLocacao ms-locacoes");
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest));
     }
 

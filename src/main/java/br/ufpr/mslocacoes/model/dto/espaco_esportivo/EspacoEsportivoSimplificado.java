@@ -21,7 +21,6 @@ public class EspacoEsportivoSimplificado {
             this.id = Long.valueOf((Integer) hm.get("id"));
             this.nome = (String) hm.get("nome");
             this.localidade = (String) hm.get("localidade");
-
         }
     }
 }

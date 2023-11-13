@@ -1,6 +1,7 @@
 package br.ufpr.mslocacoes.client;
 
 
+import br.ufpr.mslocacoes.model.dto.email.CriacaoEmailRequest;
 import br.ufpr.mslocacoes.model.dto.notificacao.CriacaoNotificacaoRequest;
 import br.ufpr.mslocacoes.security.TokenService;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,18 +35,16 @@ public class MsComunicacoesClient {
     }
 
 
-    public void criarNotificacao(Long idCliente, String titulo, String conteudo) {
+    public void enviarNotificacao(CriacaoNotificacaoRequest request) {
         String url = urlMsComunicacoes + "/notificacoes";
         HttpHeaders headers = gerarCabecalho();
 
-        var body  = CriacaoNotificacaoRequest.builder()
-                .idCliente(idCliente)
-                .titulo(titulo)
-                .conteudo(conteudo)
-                .build();
-
-        restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, headers), Object.class).getBody();
+        restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), Object.class).getBody();
     }
 
-
+    public void enviarEmail(CriacaoEmailRequest request) {
+        String url = urlMsComunicacoes + "/email/via-ms";
+        HttpHeaders headers = gerarCabecalho();
+        restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), Object.class);
+    }
 }

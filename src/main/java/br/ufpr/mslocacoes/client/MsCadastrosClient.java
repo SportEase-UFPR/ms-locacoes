@@ -1,5 +1,6 @@
 package br.ufpr.mslocacoes.client;
 
+import br.ufpr.mslocacoes.model.dto.cliente.ClienteBuscaResponse;
 import br.ufpr.mslocacoes.model.dto.cliente.NomeClienteResponse;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspEsportivoBuscaResponse;
@@ -50,7 +51,7 @@ public class MsCadastrosClient {
 
 
     public List<InformacoesComplementaresLocacaoResponse> buscarInformacoesComplementaresLocacao(List<InformacoesComplementaresLocacaoRequest> request) {
-        String url = urlMsCadastro + "espacos-esportivos/buscar-inf-complementares-locacao" ;
+        String url = urlMsCadastro + "/espacos-esportivos/buscar-inf-complementares-locacao" ;
         HttpHeaders headers = gerarCabecalho();
         var response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), new ParameterizedTypeReference<List<Object>>() {}).getBody();
         var listaInfComplementares = new ArrayList<InformacoesComplementaresLocacaoResponse>();
@@ -60,13 +61,13 @@ public class MsCadastrosClient {
     }
 
     public void atualizarMediaAvaliacaoEE(Long idEspacoEsportivo, AtualizarMediaAvaliacaoEERequest request) {
-        String url = urlMsCadastro + "espacos-esportivos/atualizar-media-avaliacao/" + idEspacoEsportivo;
+        String url = urlMsCadastro + "/espacos-esportivos/atualizar-media-avaliacao/" + idEspacoEsportivo;
         HttpHeaders headers = gerarCabecalho();
         restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(request, headers), Object.class);
     }
 
     public List<NomeClienteResponse> buscarNomesClientes(List<Long> request) {
-        String url = urlMsCadastro + "espacos-esportivos/buscar-lista-nomes";
+        String url = urlMsCadastro + "/espacos-esportivos/buscar-lista-nomes";
         HttpHeaders headers = gerarCabecalho();
         var response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), new ParameterizedTypeReference<List<Object>>() {}).getBody();
         var listaNomes = new ArrayList<NomeClienteResponse>();
@@ -76,12 +77,20 @@ public class MsCadastrosClient {
     }
 
     public List<EspacoEsportivoSimplificado> buscarEspacoesEsportivosSimplificado(List<Long> request) {
-        String url = urlMsCadastro + "espacos-esportivos/buscar-lista-ee-simplificado";
+        String url = urlMsCadastro + "/espacos-esportivos/buscar-lista-ee-simplificado";
         HttpHeaders headers = gerarCabecalho();
         var response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), new ParameterizedTypeReference<List<Object>>() {}).getBody();
         var listaEE = new ArrayList<EspacoEsportivoSimplificado>();
         assert response != null;
         response.forEach(obj -> listaEE.add(new EspacoEsportivoSimplificado(obj)));
         return listaEE;
+    }
+
+    public ClienteBuscaResponse buscarClientePorId(Long idCliente) {
+        String url = urlMsCadastro + "/clientes/via-ms/" + idCliente;
+        HttpHeaders headers = gerarCabecalho();
+        var response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), Object.class).getBody();
+        return new ClienteBuscaResponse(response);
+
     }
 }
