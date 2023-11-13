@@ -22,13 +22,12 @@ public class SecurityFilter extends OncePerRequestFilter {
         this.tokenService = tokenService;
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var tokenJWT = recuperarToken(request);
 
         if(tokenJWT != null) {
-            tokenService.validarToken(tokenJWT); //valida o token
+            tokenService.validarTokenApiGateway(tokenJWT); //valida o token
             var authentication = new UsernamePasswordAuthenticationToken(tokenJWT, null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication); //considera o usuário logado para essa requisição
         }

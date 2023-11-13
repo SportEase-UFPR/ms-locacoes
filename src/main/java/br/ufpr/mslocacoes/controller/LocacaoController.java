@@ -36,7 +36,6 @@ public class LocacaoController {
     @PostMapping("/horarios-disponiveis")
     public ResponseEntity<HorariosDisponiveisResponse> verificarHorariosDisponiveisParaLocacao(
             @Valid @RequestBody HorarioDisponivelRequest horarioDisponivelRequest) {
-        log.info("INICIO verificarHorariosDisponiveisParaLocacao ms-locacoes");
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest));
     }
 
@@ -113,7 +112,7 @@ public class LocacaoController {
 
     @GetMapping("/estatisticas-reserva")
     public ResponseEntity<List<EstatisticasReservaResponse>> buscarEstatisticasReserva(@RequestHeader("AuthorizationApi") String token) {
-        tokenService.validarTokenApiMsCadastros(token);
+        tokenService.validarTokenMs(token);
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarEstatisticasReserva());
     }
 }

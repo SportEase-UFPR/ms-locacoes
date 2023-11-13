@@ -1,6 +1,7 @@
 package br.ufpr.mslocacoes.client;
 
 
+import br.ufpr.mslocacoes.model.dto.email.CriacaoEmailRequest;
 import br.ufpr.mslocacoes.model.dto.notificacao.CriacaoNotificacaoRequest;
 import br.ufpr.mslocacoes.security.TokenService;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,18 +14,15 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Service
-public class MsNotificacaoClient {
+public class MsComunicacoesClient {
 
-    @Value("${url.ms.comunicacoes.notificacoes}")
-    private String urlMsNotificacoes;
-
-
-    public static final String AUTHORIZATION_USER = "AuthorizationUser";
+    @Value("${url.ms.comunicacoes}")
+    private String urlMsComunicacoes;
 
     private final RestTemplate restTemplate;
     private final TokenService tokenService;
 
-    public MsNotificacaoClient(RestTemplate restTemplate, TokenService tokenService) {
+    public MsComunicacoesClient(RestTemplate restTemplate, TokenService tokenService) {
         this.restTemplate = restTemplate;
         this.tokenService = tokenService;
     }
@@ -32,23 +30,21 @@ public class MsNotificacaoClient {
     private HttpHeaders gerarCabecalho() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("AuthorizationApi", tokenService.gerarTokenMsLocacoes());
+        headers.set("AuthorizationApi", tokenService.gerarTokenMs());
         return headers;
     }
 
 
-    public void criarNotificacao(Long idCliente, String titulo, String conteudo) {
-        String url = urlMsNotificacoes;
+    public void enviarNotificacao(CriacaoNotificacaoRequest request) {
+        String url = urlMsComunicacoes + "/notificacoes";
         HttpHeaders headers = gerarCabecalho();
 
-        var body  = CriacaoNotificacaoRequest.builder()
-                .idCliente(idCliente)
-                .titulo(titulo)
-                .conteudo(conteudo)
-                .build();
-
-        restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(body, headers), Object.class).getBody();
+        restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), Object.class).getBody();
     }
 
-
+    public void enviarEmail(CriacaoEmailRequest request) {
+        String url = urlMsComunicacoes + "/email/via-ms";
+        HttpHeaders headers = gerarCabecalho();
+        restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request, headers), Object.class);
+    }
 }

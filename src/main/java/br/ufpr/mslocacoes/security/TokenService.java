@@ -17,43 +17,50 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.mslocacoes.secret}")
-    private String msLocacoesSecret;
-
-    @Value("${api.security.token.apigateway.secret}")
+    @Value("${api.gateway.secret}")
     private String apiGatewaySecret;
+
+    @Value("${ms.secret}")
+    private String msSecret;
 
     @Value("${api.gateway.issuer}")
     private String apiGatewayIssuer;
 
-    @Value("${api.mslocacoes.issuer}")
-    private String msLocacoesIssuer;
+    @Value("${ms.issuer}")
+    private String msIssuer;
 
-    @Value("${api.mscadastros.issuer}")
-    private String msCadastrosIssuer;
 
-    @Value("${api.security.token.mscadastros.secret}")
-    private String msCadastrosSecret;
-
-    public void validarToken(String tokenJWT) {
-        var tokenFormatado = removerPrefixoToken(tokenJWT);
+    public void validarTokenApiGateway(String tokenJWT) {
         try {
             var algoritmo = Algorithm.HMAC256(apiGatewaySecret);
             JWT.require(algoritmo)
                     .withIssuer(apiGatewayIssuer)
                     .build()
-                    .verify(tokenFormatado);
+                    .verify(tokenJWT);
         } catch (JWTVerificationException ex) {
             log.error(ex.getMessage());
             throw new TokenInvalidoException("Token JWT inválido ou expirado");
         }
     }
 
-    public String gerarTokenMsLocacoes() {
-        var algoritmo = Algorithm.HMAC256(msLocacoesSecret);
+    public void validarTokenMs(String tokenJWT) {
+        try {
+            var algoritmo = Algorithm.HMAC256(msSecret);
+            JWT.require(algoritmo)
+                    .withIssuer(msIssuer)
+                    .build()
+                    .verify(tokenJWT);
+        } catch (JWTVerificationException ex) {
+            log.error(ex.getMessage());
+            throw new TokenInvalidoException("Token JWT inválido ou expirado");
+        }
+    }
+
+    public String gerarTokenMs() {
+        var algoritmo = Algorithm.HMAC256(msSecret);
         return JWT.create()
-                .withIssuer(msLocacoesIssuer)
-                .withSubject(msLocacoesIssuer)
+                .withIssuer(msIssuer)
+                .withSubject(msIssuer)
                 .withExpiresAt(dataExpiracao(20)) //data da expiração
                 .sign(algoritmo); //assinatura
 
@@ -77,17 +84,4 @@ public class TokenService {
         return LocalDateTime.now().plusMinutes(minutes).toInstant(ZoneOffset.of("-03:00"));
     }
 
-    public void validarTokenApiMsCadastros(String tokenApi) {
-        var tokenFormatado = removerPrefixoToken(tokenApi);
-        try {
-            var algoritmo = Algorithm.HMAC256(msCadastrosSecret);
-            JWT.require(algoritmo)
-                    .withIssuer(msCadastrosIssuer)
-                    .build()
-                    .verify(tokenFormatado);
-        } catch (JWTVerificationException ex) {
-            log.error(ex.getMessage());
-            throw new TokenInvalidoException("Token JWT inválido ou expirado");
-        }
-    }
 }

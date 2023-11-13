@@ -1,7 +1,9 @@
 package br.ufpr.mslocacoes.service;
 
 import br.ufpr.mslocacoes.client.MsCadastrosClient;
-import br.ufpr.mslocacoes.client.MsNotificacaoClient;
+import br.ufpr.mslocacoes.client.MsComunicacoesClient;
+import br.ufpr.mslocacoes.emails.TemplateEmails;
+import br.ufpr.mslocacoes.emails.TemplateNotificacoes;
 import br.ufpr.mslocacoes.exceptions.BussinessException;
 import br.ufpr.mslocacoes.exceptions.EntityNotFoundException;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +30,14 @@ public class LocacaoService {
     private final TokenService tokenService;
     private final LocacaoRepository locacaoRepository;
     private final MsCadastrosClient msCadastrosClient;
-    private final MsNotificacaoClient msNotificacaoClient;
+    private final MsComunicacoesClient msComunicacoesClient;
 
-    public LocacaoService(TokenService tokenService, LocacaoRepository locacaoRepository, MsCadastrosClient msCadastrosClient, MsNotificacaoClient msNotificacaoClient) {
+
+    public LocacaoService(TokenService tokenService, LocacaoRepository locacaoRepository, MsCadastrosClient msCadastrosClient, MsComunicacoesClient msComunicacoesClient) {
         this.tokenService = tokenService;
         this.locacaoRepository = locacaoRepository;
         this.msCadastrosClient = msCadastrosClient;
-        this.msNotificacaoClient = msNotificacaoClient;
+        this.msComunicacoesClient = msComunicacoesClient;
     }
 
     public SolicitacaoLocacaoResponse solicitarLocacao(SolicitacaoLocacaoRequest request, String token) {
@@ -247,16 +249,12 @@ public class LocacaoService {
         locacao.setIdAdministrador(idAdm);
         locacaoRepository.save(locacao);
 
-        //TODO enviar notificação via email e colocar os textos das notificações em outra classe
+        //enviar notificação e email informando a aprovação
         var ee = msCadastrosClient.buscarEspacoEsportivoPorId(locacao.getIdEspacoEsportivo());
+        var cliente = msCadastrosClient.buscarClientePorId(locacao.getIdCliente());
 
-        var diaLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
-        var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
-
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI APROVADA!",
-                "Que notícia boa, sua reserva para o espaço '" + ee.getNome()
-                + "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi aprovada :)");
+        msComunicacoesClient.enviarEmail(TemplateEmails.emailAprovacaoReserva(cliente, locacao, ee));
+        msComunicacoesClient.enviarNotificacao(TemplateNotificacoes.notificacaoAprovacaoReserva(locacao.getIdCliente(), locacao, ee));
 
         return null;
     }
@@ -280,17 +278,12 @@ public class LocacaoService {
         locacaoRepository.save(locacao);
 
 
-        //TODO enviar notificação via email e colocar os textos das notificações em outra classe
+        //enviar notificação e email informando a negação
         var ee = msCadastrosClient.buscarEspacoEsportivoPorId(locacao.getIdEspacoEsportivo());
-        var diaLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
-        var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+        var cliente = msCadastrosClient.buscarClientePorId(locacao.getIdCliente());
 
-
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI NEGADA",
-                "Infelizmente sua reserva para o espaço '" + ee.getNome() +
-                "' no dia " + diaLocacao + " - " + horaInicioLocacao + " às " + horaFimLocacao + " foi negada pelo seguinte motivo: "
-                + request.getJustificativa());
+        msComunicacoesClient.enviarEmail(TemplateEmails.emailNegacaoReserva(cliente, locacao, ee));
+        msComunicacoesClient.enviarNotificacao(TemplateNotificacoes.notificacaoNegacaoReserva(locacao.getIdCliente(), locacao, ee));
         return null;
     }
 
@@ -305,17 +298,12 @@ public class LocacaoService {
         }
         locacaoRepository.save(locacao);
 
-        //TODO enviar notificação via email e colocar os textos das notificações em outra classe
+        //enviar notificação e email informando a aprovação
         var ee = msCadastrosClient.buscarEspacoEsportivoPorId(locacao.getIdEspacoEsportivo());
-        var diaLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        var horaInicioLocacao = locacao.getDataHoraInicioReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
-        var horaFimLocacao =  locacao.getDataHoraFimReserva().format(DateTimeFormatter.ofPattern("HH:mm"));
+        var cliente = msCadastrosClient.buscarClientePorId(locacao.getIdCliente());
 
-
-        msNotificacaoClient.criarNotificacao(locacao.getIdCliente(), "SUA RESERVA FOI ENCERRADA",
-                "Sua reserva para o espaço '" + ee.getNome() + "' no dia " + diaLocacao + " - "
-                + horaInicioLocacao + " às " + horaFimLocacao + " foi encerrada pelo administrador."
-                + (request.getJustificativa() != null ? " Justificativa: " + request.getJustificativa() : ""));
+        msComunicacoesClient.enviarEmail(TemplateEmails.emailEncerramentoReserva(cliente, locacao, ee));
+        msComunicacoesClient.enviarNotificacao(TemplateNotificacoes.notificacaoEncerramentoReserva(locacao.getIdCliente(), locacao, ee));
 
         return null;
     }
