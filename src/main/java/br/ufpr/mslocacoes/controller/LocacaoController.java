@@ -115,4 +115,9 @@ public class LocacaoController {
         tokenService.validarTokenMs(token);
         return ResponseEntity.status(HttpStatus.OK).body(locacaoService.buscarEstatisticasReserva());
     }
+
+    @DeleteMapping("/comentarios/{idLocacao}")
+    public ResponseEntity<Void> excluirComentario(@PathVariable Long idLocacao) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(locacaoService.excluirComentario(idLocacao));
+    }
 }

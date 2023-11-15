@@ -14,6 +14,7 @@ import br.ufpr.mslocacoes.model.entity.Locacao;
 import br.ufpr.mslocacoes.model.enums.StatusLocacao;
 import br.ufpr.mslocacoes.repository.LocacaoRepository;
 import br.ufpr.mslocacoes.security.TokenService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -393,4 +394,12 @@ public class LocacaoService {
         return listaEstatistica;
     }
 
+    @Transactional
+    public Void excluirComentario(Long idLocacao) {
+        if(!locacaoRepository.existsById(idLocacao)) {
+            throw new EntityNotFoundException("Locação não encontrada");
+        }
+        locacaoRepository.excluirComentario(idLocacao);
+        return null;
+    }
 }

@@ -4,7 +4,9 @@ import br.ufpr.mslocacoes.model.dto.locacao.EstatisticasReservaResponse;
 import br.ufpr.mslocacoes.model.entity.Locacao;
 import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -76,6 +78,14 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
     """, nativeQuery = true)
     List<Locacao> buscarLocacaoPorDiaEIdClienteEEspacoEsportivo(Long idCliente, LocalDate data, Long idEspacoEsportivo);
 
+ @Transactional
+ @Query(value = """
+    UPDATE tb_locacoes l SET comentario_cliente=null
+    WHERE  l.id = ?1""", nativeQuery = true)
+ @Modifying
+ void excluirComentario(Long idLocacao);
+
+
  @Query(value = """
         SELECT
             id_cliente as idCliente,
@@ -112,9 +122,5 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
           .totalReservasEncerradas(tuple.get("totalReservasEncerradas", BigDecimal.class).intValue())
           .build();
  }
-
-
-
-
 
 }
