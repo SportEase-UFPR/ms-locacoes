@@ -17,6 +17,7 @@ import java.util.List;
 public class ComentarioEEResponse {
     Long idEspacoEsportivo;
     Long idCliente;
+    Long idLocacao;
     String nomeCliente;
     LocalDateTime dataHoraComentario;
     String comentario;
@@ -28,6 +29,7 @@ public class ComentarioEEResponse {
         this.dataHoraComentario = reserva.getDataHoraComentario();
         this.comentario = reserva.getComentarioCliente();
         this.avaliacao = reserva.getAvaliacao();
+        this.idLocacao = reserva.getId();
     }
 
     public void preencherNomeCliente(List<NomeClienteResponse> lista) {
