@@ -35,8 +35,9 @@ public class LocacaoController {
 
     @PostMapping("/horarios-disponiveis")
     public ResponseEntity<HorariosDisponiveisResponse> verificarHorariosDisponiveisParaLocacao(
-            @Valid @RequestBody HorarioDisponivelRequest horarioDisponivelRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest));
+            @Valid @RequestBody HorarioDisponivelRequest horarioDisponivelRequest,
+            @RequestHeader("AuthorizationUser") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.verificarHorariosDisponiveisParaLocacao(horarioDisponivelRequest, token));
     }
 
     @PutMapping("/cancelar-reserva/{idReserva}")

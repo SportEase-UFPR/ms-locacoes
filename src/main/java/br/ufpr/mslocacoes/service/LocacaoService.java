@@ -130,9 +130,11 @@ public class LocacaoService {
         return new SolicitacaoLocacaoResponse(novaLocacao);
     }
 
-    public HorariosDisponiveisResponse verificarHorariosDisponiveisParaLocacao(HorarioDisponivelRequest request) {
+    public HorariosDisponiveisResponse verificarHorariosDisponiveisParaLocacao(HorarioDisponivelRequest request, String token) {
+        var idCliente = Long.parseLong(tokenService.getIssuer(token, "idPessoa"));
+
         //buscar locações solicitadas no dia informado
-        List<Locacao> locacoes = locacaoRepository.buscarLocacoesPorDiaEIdEspacoEsportivo(request.getData(), request.getIdEspacoEsportivo());
+        var locacoes = locacaoRepository.buscarLocacoesPorDiaEIdEspacoEsportivo(request.getData(), request.getIdEspacoEsportivo());
 
         //Recuperar espaço esportivo
         EspEsportivoBuscaResponse ee = null;
@@ -142,14 +144,37 @@ public class LocacaoService {
             throw new EntityNotFoundException("Espaço esportivo não cadastrado");
         }
 
+        //Verificar se é possível reservar espaço esportivo para o dia informado
+        var diaSemana = request.getData().getDayOfWeek().getValue();
+        diaSemana = diaSemana == 7 ? 0 : diaSemana;
+
+        if(!ee.getDiasFuncionamento().contains(diaSemana)) {
+            throw new BussinessException("O espaço esportivo não permite reservas nesse dia da semana");
+        }
+
+        //verificar se o cliente não chegou ao limite de locações para o espaço esportivo nesse dia informado.
+        var listaLocacoesDesseCliente = locacoes.stream().filter(locacao -> locacao.getIdCliente() == idCliente).toList();
+
+        var duracaoTotal = Duration.ZERO;
+        for (var locacao : listaLocacoesDesseCliente) {
+            var dataHoraInicio = locacao.getDataHoraInicioReserva();
+            var dataHoraFim = locacao.getDataHoraFimReserva();
+            var duracaoLocacao = Duration.between(dataHoraInicio, dataHoraFim);
+            duracaoTotal = duracaoTotal.plus(duracaoLocacao);
+        }
+        var tempoPorLocacao = Duration.between(LocalTime.MIN, ee.getPeriodoLocacao());
+        if(duracaoTotal.compareTo(tempoPorLocacao.multipliedBy(ee.getMaxLocacaoDia())) >= 0) {
+            throw new BussinessException("Você já atingiu o limite de reservas do espaço esportivo para o dia escolhido");
+        }
+
         //verificar horários válidos para o espaço esportivo informado
-        HorariosDisponiveisResponse response = new HorariosDisponiveisResponse(ee, ee.getPeriodoLocacao());
+        var response = new HorariosDisponiveisResponse(ee, ee.getPeriodoLocacao());
 
 
         // Remover as horas que já estão ocupadas
         locacoes.forEach(locacao -> {
-            LocalTime horaInicio = locacao.getDataHoraInicioReserva().toLocalTime();
-            LocalTime horaFim = locacao.getDataHoraFimReserva().toLocalTime();
+            var horaInicio = locacao.getDataHoraInicioReserva().toLocalTime();
+            var horaFim = locacao.getDataHoraFimReserva().toLocalTime();
 
             response.getHorariosDisponiveis().removeIf(hora ->
                     (hora.equals(horaInicio) || hora.isAfter(horaInicio)) &&
