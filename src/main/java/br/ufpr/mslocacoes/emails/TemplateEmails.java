@@ -22,18 +22,18 @@ public class TemplateEmails {
         var assunto = "SportEase - Sua reserva foi aprovada!";
         var mensagem = """
                 <html><body>
-                    <p>Olá %s,</p>
+                    <h2>Olá %s,</h2>
                     <p>A sua reserva para o espaço esportivo "%s" foi aprovada!</p>
                     <p>Detalhes da reserva:</p>
                     <ul>
-                        <li>Localidade: %s</li>
-                        <li>Quantidade de participantes: %s</li>
-                        <li>Data: %s</li>
-                        <li>Horário: das %s às %s</li>
+                      <li>Localidade: %s</li>
+                      <li>Quantidade de participantes: %s</li>
+                      <li>Data: %s</li>
+                      <li>Horário: das %s às %s</li>
                     </ul>
-                    <p>Caso não possa comparecer ao espaço esportivo, para não ser penalizado, lembre-se de cancelar a reserva até 24h antes do horário marcado.</p>
-                    <p>Atenciosamente,</p>
-                    <p>A Equipe SportEase.</p>
+                    <p>Caso não possa comparecer ao espaço esportivo, para não ser penalizado, lembre-se de cancelar a reserva até 15 minutos antes do horário marcado.</p>
+                    <p style="margin: 0;">Atenciosamente,</p>
+                    <p style="margin: 0;">A Equipe SportEase.</p>
                 </body></html>
                 """.formatted(cliente.getNome(), ee.getNome(), ee.getLocalidade(),
                 locacao.getQtdParticipantes().toString(), dataFormatada, horaInicioFormatada, horaFimFormatada);
@@ -53,12 +53,12 @@ public class TemplateEmails {
         var assunto = "SportEase - Sua reserva foi negada";
         var mensagem = """
         <html><body>
-            <p>Olá %s,</p>
+            <h2>Olá %s,</h2>
             <p>Infelizmente, sua reserva para o espaço esportivo "%s" no dia %s, das %s às %s, foi negada.</p>
             <p>O motivo para a não aprovação da sua reserva é: "%s"</p>
             <p>Em caso de dúvidas, você pode responder a esse email.</p>
-            <p>Atenciosamente,</p>
-            <p>A Equipe SportEase.</p>
+            <p style="margin: 0;">Atenciosamente,</p>
+            <p style="margin: 0;">A Equipe SportEase.</p>
         </body></html>
         """.formatted(cliente.getNome(), ee.getNome(), dataFormatada, horaInicioFormatada, horaFimFormatada,
                 locacao.getMotivoCancelamento());
@@ -79,12 +79,12 @@ public class TemplateEmails {
         var assunto = "SportEase - Sua reserva foi encerrada";
         var mensagem = """
         <html><body>
-            <p>Olá %s,</p>
+            <h2>Olá %s,</h2>
             <p>Sua reserva para o espaço esportivo "%s" no dia %s, das %s às %s, foi encerrada pelo administrador.</p>
             <p>%s</p>
             <p>Em caso de dúvidas, você pode responder a esse email.</p>
-            <p>Atenciosamente,</p>
-            <p>A Equipe SportEase.</p>
+            <p style="margin: 0;">Atenciosamente,</p>
+            <p style="margin: 0;">A Equipe SportEase.</p>
         </body></html>
         """.formatted(cliente.getNome(), ee.getNome(), dataFormatada, horaInicioFormatada, horaFimFormatada,
                 locacao.getMotivoEncerramento() != null ?
