@@ -69,4 +69,19 @@ public class TemplateNotificacoes {
                 .conteudo(conteudo)
                 .build();
     }
+
+    public static CriacaoNotificacaoRequest notificacaoEspacoEsportivoIndisponivel(Long idCliente, EspEsportivoBuscaResponse ee) {
+        var titulo = "SUA RESERVA FOI ENCERRADA";
+
+        var conteudo = """
+                Suas reservas para o espaço "%s" foram encerradas pois o espaço esportivo não está mais disponível.
+                """
+                .formatted(ee.getNome());
+
+        return CriacaoNotificacaoRequest.builder()
+                .idCliente(idCliente)
+                .titulo(titulo)
+                .conteudo(conteudo)
+                .build();
+    }
 }

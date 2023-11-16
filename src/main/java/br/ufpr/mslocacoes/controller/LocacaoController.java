@@ -121,4 +121,11 @@ public class LocacaoController {
     public ResponseEntity<Void> excluirComentario(@PathVariable Long idLocacao) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(locacaoService.excluirComentario(idLocacao));
     }
+
+    @PutMapping("/encerrar-reservas-futuras/{idEspacoEsportivo}")
+    public ResponseEntity<Void> encerrarReserva(@PathVariable Long idEspacoEsportivo, @RequestHeader("AuthorizationApi") String token) {
+        tokenService.validarTokenMs(token);
+        return ResponseEntity.status(HttpStatus.OK).body(locacaoService.encerrarReservasFuturas(idEspacoEsportivo));
+    }
+
 }

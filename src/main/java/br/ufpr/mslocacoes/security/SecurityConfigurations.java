@@ -35,6 +35,7 @@ public class SecurityConfigurations {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //desabilita a autenticação stateful que utiliza sessões e página de login do spring security
                 .and().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, "/locacoes/estatisticas-reserva").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/locacoes/encerrar-reservas-futuras/*").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) //serve para chamar o filtro (SecurityFilter) antes do filtro do spring
                 .build();

@@ -21,7 +21,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+import static br.ufpr.mslocacoes.emails.ConstantesMsgs.MOTIVO_ENCERRAMENTO_DESATIVACAO_EE;
 import static br.ufpr.mslocacoes.utils.HorarioBrasil.buscarHoraAtual;
 
 
@@ -425,6 +429,33 @@ public class LocacaoService {
             throw new EntityNotFoundException("Locação não encontrada");
         }
         locacaoRepository.excluirComentario(idLocacao);
+        return null;
+    }
+
+    @Transactional
+    public Void encerrarReservasFuturas(Long idEspacoEsportivo) {
+        //Buscar reservas futuras (excluindo idCliente repetidos)
+        List<Locacao> reservasFuturas = locacaoRepository.buscarReservasFuturas(idEspacoEsportivo).stream()
+                .collect(Collectors.toMap(Locacao::getIdCliente, locacao -> locacao, (existing, replacement) -> existing))
+                .values().stream()
+                .toList();
+
+        //encerrar reservas
+        locacaoRepository.encerrarReservasFuturas(idEspacoEsportivo, MOTIVO_ENCERRAMENTO_DESATIVACAO_EE);
+
+        //notificar clientes
+        var ee = msCadastrosClient.buscarEspacoEsportivoPorId(idEspacoEsportivo);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        reservasFuturas.forEach(locacao -> executorService.execute(() -> {
+            var cliente = msCadastrosClient.buscarClientePorId(locacao.getIdCliente());
+            msComunicacoesClient.enviarNotificacao(TemplateNotificacoes.notificacaoEspacoEsportivoIndisponivel(locacao.getIdCliente(), ee));
+            msComunicacoesClient.enviarEmail(TemplateEmails.emailEspacoEsportivoIndisponivel(cliente, ee));
+        }));
+
+        executorService.shutdown();
+        while (!executorService.isTerminated()) {}
+
         return null;
     }
 }

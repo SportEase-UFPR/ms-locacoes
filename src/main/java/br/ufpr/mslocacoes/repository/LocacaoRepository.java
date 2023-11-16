@@ -123,4 +123,19 @@ public interface LocacaoRepository extends JpaRepository<Locacao, Long> {
           .build();
  }
 
+ @Transactional
+ @Query(value = """
+    UPDATE tb_locacoes l SET l.status='ENCERRADA', motivo_encerramento=?2
+    WHERE  l.id_espaco_esportivo = ?1
+    AND (l.status = 'APROVADA' OR l.status = 'SOLICITADA')
+    AND data_hora_inicio_reserva > CONVERT_TZ(NOW(), '+00:00', '-03:00')""", nativeQuery = true)
+ @Modifying
+ void encerrarReservasFuturas(Long idEspacoEsportivo, String motivoEncerramento);
+
+ @Query(value = """
+    SELECT * FROM tb_locacoes l
+    WHERE  l.id_espaco_esportivo = ?1
+    AND (l.status = 'APROVADA' OR l.status = 'SOLICITADA')
+    AND data_hora_inicio_reserva > CONVERT_TZ(NOW(), '+00:00', '-03:00')""", nativeQuery = true)
+ List<Locacao> buscarReservasFuturas(Long idEspacoEsportivo);
 }

@@ -97,4 +97,24 @@ public class TemplateEmails {
                 .email(cliente.getEmail())
                 .build();
     }
+
+    public static CriacaoEmailRequest emailEspacoEsportivoIndisponivel(ClienteBuscaResponse cliente, EspEsportivoBuscaResponse ee) {
+        var assunto = "SportEase - Sua reserva foi cancelada";
+        var mensagem = """
+        <html><body>
+            <h2>Olá %s,</h2>
+            <p>Suas reservas para o espaço esportivo "%s" foram canceladas pois o espaço esportivo não está mais disponível.</p>
+            <p>Em caso de dúvidas, você pode responder a esse email.</p>
+            <p style="margin: 0;">Atenciosamente,</p>
+            <p style="margin: 0;">A Equipe SportEase.</p>
+        </body></html>
+        """.formatted(cliente.getNome(), ee.getNome());
+
+
+        return CriacaoEmailRequest.builder()
+                .assunto(assunto)
+                .mensagem(mensagem)
+                .email(cliente.getEmail())
+                .build();
+    }
 }
