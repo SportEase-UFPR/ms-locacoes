@@ -53,7 +53,9 @@ public class EspEsportivoBuscaResponse {
             this.maxLocacaoDia = (Integer) hm.get("maxLocacaoDia");
 
             ArrayList<?> listaEsportesObj = (ArrayList<?>) hm.get("listaEsportes");
-            listaEsportesObj.forEach(esporte -> this.listaEsportes.add(new EsporteResponse(esporte)));
+            if(listaEsportesObj != null) {
+                listaEsportesObj.forEach(esporte -> this.listaEsportes.add(new EsporteResponse(esporte)));
+            }
 
             ArrayList<?> diasFuncionamentoObj = (ArrayList<?>) hm.get("diasFuncionamento");
 
