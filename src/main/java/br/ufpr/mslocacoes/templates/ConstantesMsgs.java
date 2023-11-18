@@ -1,4 +1,4 @@
-package br.ufpr.mslocacoes.emails;
+package br.ufpr.mslocacoes.templates;
 
 public class ConstantesMsgs {
     private ConstantesMsgs(){}

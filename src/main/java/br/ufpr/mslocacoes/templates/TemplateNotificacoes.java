@@ -1,4 +1,4 @@
-package br.ufpr.mslocacoes.emails;
+package br.ufpr.mslocacoes.templates;
 
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.EspEsportivoBuscaResponse;
 import br.ufpr.mslocacoes.model.dto.notificacao.CriacaoNotificacaoRequest;

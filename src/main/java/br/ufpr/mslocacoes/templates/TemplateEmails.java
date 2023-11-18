@@ -1,4 +1,4 @@
-package br.ufpr.mslocacoes.emails;
+package br.ufpr.mslocacoes.templates;
 
 
 import br.ufpr.mslocacoes.model.dto.cliente.ClienteBuscaResponse;
@@ -31,7 +31,7 @@ public class TemplateEmails {
                       <li>Data: %s</li>
                       <li>Horário: das %s às %s</li>
                     </ul>
-                    <p>Caso não possa comparecer ao espaço esportivo, para não ser penalizado, lembre-se de cancelar a reserva até 15 minutos antes do horário marcado.</p>
+                    <p>Caso não possa comparecer ao espaço esportivo, lembre-se de cancelar a reserva com no mínimo 24 horas antes do horário marcado.</p>
                     <p style="margin: 0;">Atenciosamente,</p>
                     <p style="margin: 0;">A Equipe SportEase.</p>
                 </body></html>

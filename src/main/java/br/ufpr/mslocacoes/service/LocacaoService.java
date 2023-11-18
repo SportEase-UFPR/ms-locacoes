@@ -2,8 +2,8 @@ package br.ufpr.mslocacoes.service;
 
 import br.ufpr.mslocacoes.client.MsCadastrosClient;
 import br.ufpr.mslocacoes.client.MsComunicacoesClient;
-import br.ufpr.mslocacoes.emails.TemplateEmails;
-import br.ufpr.mslocacoes.emails.TemplateNotificacoes;
+import br.ufpr.mslocacoes.templates.TemplateEmails;
+import br.ufpr.mslocacoes.templates.TemplateNotificacoes;
 import br.ufpr.mslocacoes.exceptions.BussinessException;
 import br.ufpr.mslocacoes.exceptions.EntityNotFoundException;
 import br.ufpr.mslocacoes.model.dto.espaco_esportivo.AtualizarMediaAvaliacaoEERequest;
@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static br.ufpr.mslocacoes.emails.ConstantesMsgs.MOTIVO_ENCERRAMENTO_DESATIVACAO_EE;
+import static br.ufpr.mslocacoes.templates.ConstantesMsgs.MOTIVO_ENCERRAMENTO_DESATIVACAO_EE;
 import static br.ufpr.mslocacoes.utils.HorarioBrasil.buscarHoraAtual;
 
 
@@ -228,8 +228,9 @@ public class LocacaoService {
             throw new BussinessException("Status da locação não permite cancelamento");
         }
 
-        if(buscarHoraAtual().plusMinutes(15).isAfter(locacao.getDataHoraInicioReserva())) {
-            throw new BussinessException("Não é mais possível cancelar a reserva");
+        if(buscarHoraAtual().plusHours(24).isAfter(locacao.getDataHoraInicioReserva())
+           && locacao.getStatus().equals(StatusLocacao.APROVADA)) {
+            throw new BussinessException("Não é mais possível cancelar a reserva pois faltam menos de 24h para o seu início");
         }
 
         locacao.setStatus(StatusLocacao.CANCELADA);
